@@ -35,11 +35,15 @@ abstract class BlockBatchActionBar {
   }
 
   protected generateButtons (): JQuery {
-    const generateButton: (label: string) => JQuery = (label) => {
+    const generateButton: (label: string, icon?: string) => JQuery = (label, icon) => {
+      const lowerCaseLabel = label.toLowerCase()
+      icon ??= lowerCaseLabel
+
       return $('<button/>')
         .attr({
           'aria-label': label,
-          'data-bba-bn': `button.${label.toLowerCase()}`
+          'data-bba-bn': `button.${lowerCaseLabel}`,
+          'data-icon': icon
         })
         .addClass('btn dashed')
         .text(label)
@@ -47,9 +51,9 @@ abstract class BlockBatchActionBar {
 
     const $expand = generateButton('Expand')
     const $collapse = generateButton('Collapse')
-    const $enable = generateButton('Enable')
-    const $disable = generateButton('Disable')
-    const $delete = generateButton('Delete')
+    const $enable = generateButton('Enable', 'enabled')
+    const $disable = generateButton('Disable', 'disabled')
+    const $delete = generateButton('Delete', 'remove')
     const $bar = $('<div class="block-batch-action-bar btngroup"/>')
       .append($expand)
       .append($collapse)
