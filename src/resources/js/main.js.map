@@ -1,0 +1,1 @@
+{"version":3,"file":"js/main.js","mappings":"AAAAA,QAAQC,IAAI","sources":["webpack://craft-block-batch-actions/./client/src/scripts/main.ts"],"sourcesContent":["console.log('Give me more code to run :(')\n"],"names":["console","log"],"sourceRoot":""}
