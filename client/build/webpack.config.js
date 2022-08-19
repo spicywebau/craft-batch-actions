@@ -10,6 +10,7 @@ module.exports = {
     filename: 'js/[name].js'
   },
   externals: {
+    jquery: 'jQuery',
     craft: 'Craft',
     garnish: 'Garnish'
   },

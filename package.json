@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/spicywebau/craft-block-batch-actions#readme",
   "devDependencies": {
+    "@types/jquery": "^3.5.14",
     "css-loader": "^6.7.1",
     "mini-css-extract-plugin": "^2.6.1",
     "sass": "^1.53.0",

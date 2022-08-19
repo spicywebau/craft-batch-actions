@@ -9,6 +9,10 @@
     "strictNullChecks": true
   },
   "files": [
-    "main.ts"
+    "BlockBatchActionBar.ts",
+    "main.ts",
+    "types/Craft.d.ts",
+    "types/Garnish.d.ts",
+    "types/Neo.d.ts"
   ]
 }
