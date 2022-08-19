@@ -45,7 +45,7 @@ abstract class BlockBatchActionBar {
           'data-bba-bn': `button.${lowerCaseLabel}`,
           'data-icon': icon
         })
-        .addClass('btn dashed')
+        .addClass('btn')
         .text(label)
     }
 
