@@ -1,18 +1,22 @@
 import { MatrixBatchActionBar, NeoBatchActionBar } from './BlockBatchActionBar'
-import { InputField } from './types/InputField'
+import { InputField, NeoInputField } from './types/InputField'
 
-interface Event {
+interface MatrixAfterInitEvent {
   target: InputField
+}
+
+interface NeoAfterInitEvent {
+  target: NeoInputField
 }
 
 const actionBars = []
 
-Garnish.on(Craft.MatrixInput, 'afterInit', (e: Event) => {
+Garnish.on(Craft.MatrixInput, 'afterInit', (e: MatrixAfterInitEvent) => {
   actionBars.push(new MatrixBatchActionBar(e.target))
 })
 
 if (typeof Neo?.Input !== 'undefined') {
-  Garnish.on(Neo.Input, 'afterInit', (e: Event) => {
+  Garnish.on(Neo.Input, 'afterInit', (e: NeoAfterInitEvent) => {
     actionBars.push(new NeoBatchActionBar(e.target))
   })
 }

@@ -13,6 +13,8 @@
     "main.ts",
     "types/Craft.d.ts",
     "types/Garnish.d.ts",
-    "types/Neo.d.ts"
+    "types/Neo.d.ts",
+    "types/InputBlock.ts",
+    "types/InputField.ts"
   ]
 }
