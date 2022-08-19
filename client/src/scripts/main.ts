@@ -1,8 +1,8 @@
 import { MatrixBatchActionBar, NeoBatchActionBar } from './BlockBatchActionBar'
-import { BlockInput } from './types/BlockInput'
+import { InputField } from './types/InputField'
 
 interface Event {
-  target: BlockInput
+  target: InputField
 }
 
 const actionBars = []

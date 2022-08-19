@@ -1,7 +1,7 @@
-import { BlockInput } from './types/BlockInput'
+import { InputField } from './types/InputField'
 
 abstract class BlockBatchActionBar {
-  constructor (public readonly input: BlockInput) {
+  constructor (public readonly input: InputField) {
     this.generateBar().prependTo(input.$container)
   }
 
@@ -11,7 +11,7 @@ abstract class BlockBatchActionBar {
 }
 
 class MatrixBatchActionBar extends BlockBatchActionBar {
-  constructor (public readonly input: BlockInput) {
+  constructor (public readonly input: InputField) {
     super(input)
   }
 
@@ -22,7 +22,7 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
 }
 
 class NeoBatchActionBar extends BlockBatchActionBar {
-  constructor (public readonly input: BlockInput) {
+  constructor (public readonly input: InputField) {
     super(input)
   }
 
