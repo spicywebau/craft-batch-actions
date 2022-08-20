@@ -17,7 +17,7 @@ abstract class BlockBatchActionBar {
     protected readonly blockSelectedClass: string
   ) {
     this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
-    this.$buttons = this.generateButtons().prependTo(this.$bar)
+    this.$buttons = this._generateButtons().prependTo(this.$bar)
     this.$menuContainer = this._generateMenu().prependTo(this.$bar)
 
     const $actions = this.$bar.add(this.$menu)
@@ -43,18 +43,20 @@ abstract class BlockBatchActionBar {
     })
   }
 
-  protected generateButtons (): JQuery {
-    const $expand = this._generateAction('Expand', null, 'btn')
-    const $collapse = this._generateAction('Collapse', null, 'btn')
-    const $enable = this._generateAction('Enable', 'enabled', 'btn')
-    const $disable = this._generateAction('Disable', 'disabled', 'btn')
-    const $delete = this._generateAction('Delete', 'remove', 'btn')
+  protected supportedActions (): Array<[string, string]> {
+    return [
+      ['Expand', 'expand'],
+      ['Collapse', 'collapse'],
+      ['Enable', 'enabled'],
+      ['Disable', 'disabled'],
+      ['Delete', 'remove']
+    ]
+  }
+
+  private _generateButtons (): JQuery {
     const $bar = $('<div class="btngroup"/>')
-      .append($expand)
-      .append($collapse)
-      .append($enable)
-      .append($disable)
-      .append($delete)
+    this.supportedActions()
+      .forEach(([label, icon]) => this._generateAction(label, icon, 'btn').appendTo($bar))
 
     return $bar
   }
@@ -63,21 +65,13 @@ abstract class BlockBatchActionBar {
     const $container = $('<div class="block-batch-action-menu hidden"/>')
     const $button: any = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
       .appendTo($container)
-
-    const $expand = $('<li/>').append(this._generateAction('Expand', null))
-    const $collapse = $('<li/>').append(this._generateAction('Collapse', null))
-    const $enable = $('<li/>').append(this._generateAction('Enable', 'enabled'))
-    const $disable = $('<li/>').append(this._generateAction('Disable', 'disabled'))
-    const $delete = $('<li/>').append(this._generateAction('Delete', 'remove'))
     this.$menu = $('<div class="menu"/>')
-      .append('<ul class="padded"/>')
       .appendTo($container)
-    this.$menu.children('ul')
-      .append($expand)
-      .append($collapse)
-      .append($enable)
-      .append($disable)
-      .append($delete)
+    const $ul = $('<ul class="padded"/>')
+      .appendTo(this.$menu)
+
+    this.supportedActions()
+      .forEach(([label, icon]) => $('<li/>').append(this._generateAction(label, icon)).appendTo($ul))
 
     $button.menubtn()
     let buttonsWidth = this.$buttons.width() ?? 0
