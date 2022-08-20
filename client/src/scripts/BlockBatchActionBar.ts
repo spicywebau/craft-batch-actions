@@ -6,55 +6,50 @@ interface ActivateEvent {
 }
 
 abstract class BlockBatchActionBar {
+  public $bar: JQuery
+  public $buttons: JQuery
+  public $menuContainer: JQuery
+  public $menu: JQuery
+
   constructor (
     public readonly input: InputField,
     protected readonly blockClass: string,
     protected readonly blockSelectedClass: string
   ) {
-    const $buttons = this.generateButtons().prependTo(input.$container)
-    $buttons.find('[data-bba-bn="button.expand"]').on('activate', (e: ActivateEvent) => {
+    this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
+    this.$buttons = this.generateButtons().prependTo(this.$bar)
+    this.$menuContainer = this._generateMenu().prependTo(this.$bar)
+
+    const $actions = this.$bar.add(this.$menu)
+    $actions.find('[data-bba-bn="button.expand"]').on('activate', (e: ActivateEvent) => {
       e.preventDefault()
       this.expand(this.getSelectedBlocks())
     })
-    $buttons.find('[data-bba-bn="button.collapse"]').on('activate', (e: ActivateEvent) => {
+    $actions.find('[data-bba-bn="button.collapse"]').on('activate', (e: ActivateEvent) => {
       e.preventDefault()
       this.collapse(this.getSelectedBlocks())
     })
-    $buttons.find('[data-bba-bn="button.enable"]').on('activate', (e: ActivateEvent) => {
+    $actions.find('[data-bba-bn="button.enable"]').on('activate', (e: ActivateEvent) => {
       e.preventDefault()
       this.enable(this.getSelectedBlocks())
     })
-    $buttons.find('[data-bba-bn="button.disable"]').on('activate', (e: ActivateEvent) => {
+    $actions.find('[data-bba-bn="button.disable"]').on('activate', (e: ActivateEvent) => {
       e.preventDefault()
       this.disable(this.getSelectedBlocks())
     })
-    $buttons.find('[data-bba-bn="button.delete"]').on('activate', (e: ActivateEvent) => {
+    $actions.find('[data-bba-bn="button.delete"]').on('activate', (e: ActivateEvent) => {
       e.preventDefault()
       this.delete(this.getSelectedBlocks())
     })
   }
 
   protected generateButtons (): JQuery {
-    const generateButton: (label: string, icon?: string) => JQuery = (label, icon) => {
-      const lowerCaseLabel = label.toLowerCase()
-      icon ??= lowerCaseLabel
-
-      return $('<button/>')
-        .attr({
-          'aria-label': label,
-          'data-bba-bn': `button.${lowerCaseLabel}`,
-          'data-icon': icon
-        })
-        .addClass('btn')
-        .text(label)
-    }
-
-    const $expand = generateButton('Expand')
-    const $collapse = generateButton('Collapse')
-    const $enable = generateButton('Enable', 'enabled')
-    const $disable = generateButton('Disable', 'disabled')
-    const $delete = generateButton('Delete', 'remove')
-    const $bar = $('<div class="block-batch-action-bar btngroup"/>')
+    const $expand = this._generateAction('Expand', null, 'btn')
+    const $collapse = this._generateAction('Collapse', null, 'btn')
+    const $enable = this._generateAction('Enable', 'enabled', 'btn')
+    const $disable = this._generateAction('Disable', 'disabled', 'btn')
+    const $delete = this._generateAction('Delete', 'remove', 'btn')
+    const $bar = $('<div class="btngroup"/>')
       .append($expand)
       .append($collapse)
       .append($enable)
@@ -62,6 +57,57 @@ abstract class BlockBatchActionBar {
       .append($delete)
 
     return $bar
+  }
+
+  private _generateMenu (): JQuery {
+    const $container = $('<div class="block-batch-action-menu hidden"/>')
+    const $button: any = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
+      .appendTo($container)
+
+    const $expand = $('<li/>').append(this._generateAction('Expand', null))
+    const $collapse = $('<li/>').append(this._generateAction('Collapse', null))
+    const $enable = $('<li/>').append(this._generateAction('Enable', 'enabled'))
+    const $disable = $('<li/>').append(this._generateAction('Disable', 'disabled'))
+    const $delete = $('<li/>').append(this._generateAction('Delete', 'remove'))
+    this.$menu = $('<div class="menu"/>')
+      .append('<ul class="padded"/>')
+      .appendTo($container)
+    this.$menu.children('ul')
+      .append($expand)
+      .append($collapse)
+      .append($enable)
+      .append($disable)
+      .append($delete)
+
+    $button.menubtn()
+    let buttonsWidth = this.$buttons.width() ?? 0
+    this.$bar.on('resize', () => {
+      buttonsWidth ||= this.$buttons.width() ?? 0
+      const isMobile = (this.$bar.width() ?? 0) < buttonsWidth
+      this.$buttons.toggleClass('hidden', isMobile)
+      $container.toggleClass('hidden', !isMobile)
+    })
+
+    return $container
+  }
+
+  private _generateAction (label: string, icon: string|null, buttonClasses?: string): JQuery {
+    const isButton = typeof buttonClasses !== 'undefined'
+    const lowerCaseLabel = label.toLowerCase()
+    icon ??= lowerCaseLabel
+    const $action = $(`<${isButton ? 'button' : 'a'}/>`)
+      .attr({
+        'aria-label': label,
+        'data-bba-bn': `button.${lowerCaseLabel}`,
+        'data-icon': icon
+      })
+      .text(label)
+
+    if (isButton) {
+      $action.addClass(buttonClasses)
+    }
+
+    return $action
   }
 
   protected abstract getSelectedBlocks (): InputBlock[]

@@ -1,0 +1,1 @@
+{"version":3,"file":"css/main.css","mappings":"AACI,kCACI,qB","sources":["webpack://craft-block-batch-actions/./client/src/styles/main.scss"],"sourcesContent":[".block-batch-action-bar {\n    > .btngroup {\n        display: inline-block;\n    }\n}\n"],"names":[],"sourceRoot":""}

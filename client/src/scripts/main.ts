@@ -1,5 +1,6 @@
 import { MatrixBatchActionBar, NeoBatchActionBar } from './BlockBatchActionBar'
 import { InputField, NeoInputField } from './types/InputField'
+import '../styles/main.scss'
 
 interface MatrixAfterInitEvent {
   target: InputField

@@ -24,6 +24,9 @@ class BlockBatchActionsAsset extends AssetBundle
         $this->depends = [
             CpAsset::class,
         ];
+        $this->css = [
+            'css/main.css',
+        ];
         $this->js = [
             'js/main.js',
         ];
