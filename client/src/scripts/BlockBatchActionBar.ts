@@ -76,7 +76,7 @@ abstract class BlockBatchActionBar {
           // Initialise the add block event
           this.input.on(this.addBlockEvent, (e: any) => {
             const $block = e.$block ?? e.block.$container
-            $block.addClass(this.input.blockSelect.settings.selectedClass)
+            $block.toggleClass(this.input.blockSelect.settings.selectedClass, $checkbox.hasClass('checked'))
           })
           initialised = true
         }
