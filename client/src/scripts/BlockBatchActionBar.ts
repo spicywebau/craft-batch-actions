@@ -12,6 +12,7 @@ abstract class BlockBatchActionBar {
   public $menuContainer: JQuery
   public $menu: JQuery
   protected addBlockEvent: string
+  private _$buttons: Record<string, JQuery> = {}
 
   constructor (
     public readonly input: InputField,
@@ -19,44 +20,52 @@ abstract class BlockBatchActionBar {
     protected readonly blockSelectedClass: string
   ) {
     this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
-    this.$selectCheckbox = this._generateSelectCheckbox().appendTo(this.$bar)
+    this.$selectCheckbox = this._initSelection().appendTo(this.$bar)
     this.$buttons = this._generateButtons().appendTo(this.$bar)
     this.$menuContainer = this._generateMenu().appendTo(this.$bar)
 
     const $actions = this.$bar.add(this.$menu)
-    $actions.find('[data-bba-bn="button.expand"]').on('activate', (e: ActivateEvent) => {
-      e.preventDefault()
-      this.expand(this.getSelectedBlocks())
+
+    this.supportedActions().forEach(([label, _icon, _check]) => {
+      const lowerCaseLabel = label.toLowerCase()
+      this._$buttons[lowerCaseLabel] = $actions.find(`[data-bba-bn="button.${lowerCaseLabel}"]`)
+      this._$buttons[lowerCaseLabel].on('activate', (e: ActivateEvent) => {
+        e.preventDefault()
+        const actionMethod = this[lowerCaseLabel as keyof BlockBatchActionBar]
+
+        if (typeof actionMethod === 'function') {
+          actionMethod(this.getSelectedBlocks())
+          this._refreshButtons()
+        }
+      })
     })
-    $actions.find('[data-bba-bn="button.collapse"]').on('activate', (e: ActivateEvent) => {
-      e.preventDefault()
-      this.collapse(this.getSelectedBlocks())
-    })
-    $actions.find('[data-bba-bn="button.enable"]').on('activate', (e: ActivateEvent) => {
-      e.preventDefault()
-      this.enable(this.getSelectedBlocks())
-    })
-    $actions.find('[data-bba-bn="button.disable"]').on('activate', (e: ActivateEvent) => {
-      e.preventDefault()
-      this.disable(this.getSelectedBlocks())
-    })
-    $actions.find('[data-bba-bn="button.delete"]').on('activate', (e: ActivateEvent) => {
-      e.preventDefault()
-      this.delete(this.getSelectedBlocks())
-    })
+
+    this._refreshButtons()
   }
 
-  protected supportedActions (): Array<[string, string]> {
+  protected supportedActions (): Array<[string, string, Function]> {
     return [
-      ['Expand', 'expand'],
-      ['Collapse', 'collapse'],
-      ['Enable', 'enabled'],
-      ['Disable', 'disabled'],
-      ['Delete', 'remove']
+      ['Expand', 'expand', this.isBlockCollapsed.bind(this)],
+      ['Collapse', 'collapse', this.isBlockExpanded.bind(this)],
+      ['Enable', 'enabled', this.isBlockDisabled.bind(this)],
+      ['Disable', 'disabled', this.isBlockEnabled.bind(this)],
+      ['Delete', 'remove', (_: JQuery) => true]
     ]
   }
 
-  private _generateSelectCheckbox (): JQuery {
+  protected abstract isBlockExpanded ($block: JQuery): boolean
+
+  protected isBlockCollapsed ($block: JQuery): boolean {
+    return !this.isBlockExpanded($block)
+  }
+
+  protected abstract isBlockEnabled ($block: JQuery): boolean
+
+  protected isBlockDisabled ($block: JQuery): boolean {
+    return !this.isBlockEnabled($block)
+  }
+
+  private _initSelection (): JQuery {
     const $checkbox = $('<div class="checkbox">')
     let handlingCheckbox = false
     let initialised = false
@@ -92,15 +101,42 @@ abstract class BlockBatchActionBar {
         // Set our checkbox handling as being complete
         handlingCheckbox = false
       }
+
+      this._refreshButtons()
     })
 
     return $checkbox
   }
 
+  private _refreshButtons (): void {
+    const actions: Record<string, any> = {}
+    const labels: string[] = []
+
+    this.supportedActions().forEach(([label, icon, check]) => {
+      labels.push(label)
+      actions[label] = {
+        icon,
+        check,
+        enable: false
+      }
+    })
+
+    this.input.blockSelect.$selectedItems.each((_: number, block: HTMLElement) => {
+      const $block = $(block)
+      labels.forEach((label) => {
+        actions[label].enable ||= actions[label].check($block)
+      })
+    })
+
+    labels.forEach((label) => {
+      this._$buttons[label.toLowerCase()].toggleClass('disabled', actions[label].enable === false)
+    })
+  }
+
   private _generateButtons (): JQuery {
     const $bar = $('<div class="btngroup"/>')
     this.supportedActions()
-      .forEach(([label, icon]) => this._generateAction(label, icon, 'btn').appendTo($bar))
+      .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo($bar))
 
     return $bar
   }
@@ -171,6 +207,14 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
     super.addBlockEvent = 'blockAdded'
   }
 
+  protected isBlockExpanded ($block: JQuery): boolean {
+    return !$block.hasClass('collapsed')
+  }
+
+  protected isBlockEnabled ($block: JQuery): boolean {
+    return !$block.hasClass('disabled')
+  }
+
   protected getSelectedBlocks (): MatrixInputBlock[] {
     return this.input.$container
       .find(`.${this.blockClass}.${this.blockSelectedClass}`)
@@ -197,6 +241,14 @@ class NeoBatchActionBar extends BlockBatchActionBar {
   constructor (public readonly input: NeoInputField) {
     super(input, 'ni_block', 'is-selected')
     super.addBlockEvent = 'addBlock'
+  }
+
+  protected isBlockExpanded ($block: JQuery): boolean {
+    return $block.hasClass('is-expanded')
+  }
+
+  protected isBlockEnabled ($block: JQuery): boolean {
+    return $block.hasClass('is-enabled')
   }
 
   protected getSelectedBlocks (): NeoInputBlock[] {
