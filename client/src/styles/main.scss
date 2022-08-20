@@ -1,7 +1,13 @@
 .block-batch-action-bar {
     margin-bottom: var(--s);
 
-    > .btngroup {
+    > .btngroup,
+    > .checkbox,
+    &_menu {
         display: inline-block;
+    }
+
+    > .checkbox {
+        margin-right: var(--s);
     }
 }

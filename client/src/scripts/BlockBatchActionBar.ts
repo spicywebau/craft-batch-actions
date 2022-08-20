@@ -7,9 +7,11 @@ interface ActivateEvent {
 
 abstract class BlockBatchActionBar {
   public $bar: JQuery
+  public $selectCheckbox: JQuery
   public $buttons: JQuery
   public $menuContainer: JQuery
   public $menu: JQuery
+  protected addBlockEvent: string
 
   constructor (
     public readonly input: InputField,
@@ -17,8 +19,9 @@ abstract class BlockBatchActionBar {
     protected readonly blockSelectedClass: string
   ) {
     this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
-    this.$buttons = this._generateButtons().prependTo(this.$bar)
-    this.$menuContainer = this._generateMenu().prependTo(this.$bar)
+    this.$selectCheckbox = this._generateSelectCheckbox().appendTo(this.$bar)
+    this.$buttons = this._generateButtons().appendTo(this.$bar)
+    this.$menuContainer = this._generateMenu().appendTo(this.$bar)
 
     const $actions = this.$bar.add(this.$menu)
     $actions.find('[data-bba-bn="button.expand"]').on('activate', (e: ActivateEvent) => {
@@ -53,6 +56,47 @@ abstract class BlockBatchActionBar {
     ]
   }
 
+  private _generateSelectCheckbox (): JQuery {
+    const $checkbox = $('<div class="checkbox">')
+    let handlingCheckbox = false
+    let initialised = false
+
+    $checkbox.on('mousedown', (e) => {
+      if (e.which === Garnish.PRIMARY_CLICK) {
+        if (!initialised) {
+          // Initialise the add block event
+          this.input.on(this.addBlockEvent, (e: any) => {
+            const $block = e.$block ?? e.block.$container
+            $block.addClass(this.input.blockSelect.settings.selectedClass)
+          })
+          initialised = true
+        }
+
+        handlingCheckbox = true
+        $checkbox.toggleClass('checked')
+        const selectAll = $checkbox.hasClass('checked')
+
+        if (selectAll) {
+          this.input.blockSelect.selectAll()
+        } else {
+          this.input.blockSelect.deselectAll()
+        }
+      }
+    })
+
+    this.input.blockSelect.on('selectionChange', (_: Event) => {
+      if (!handlingCheckbox) {
+        // Any manual change to block selection invalidates the select all state
+        $checkbox.removeClass('checked')
+      } else {
+        // Set our checkbox handling as being complete
+        handlingCheckbox = false
+      }
+    })
+
+    return $checkbox
+  }
+
   private _generateButtons (): JQuery {
     const $bar = $('<div class="btngroup"/>')
     this.supportedActions()
@@ -62,7 +106,7 @@ abstract class BlockBatchActionBar {
   }
 
   private _generateMenu (): JQuery {
-    const $container = $('<div class="block-batch-action-menu hidden"/>')
+    const $container = $('<div class="block-batch-action-bar_menu hidden"/>')
     const $button: any = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
       .appendTo($container)
     this.$menu = $('<div class="menu"/>')
@@ -124,6 +168,7 @@ abstract class BlockBatchActionBar {
 class MatrixBatchActionBar extends BlockBatchActionBar {
   constructor (public readonly input: InputField) {
     super(input, 'matrixblock', 'sel')
+    super.addBlockEvent = 'blockAdded'
   }
 
   protected getSelectedBlocks (): MatrixInputBlock[] {
@@ -151,6 +196,7 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
 class NeoBatchActionBar extends BlockBatchActionBar {
   constructor (public readonly input: NeoInputField) {
     super(input, 'ni_block', 'is-selected')
+    super.addBlockEvent = 'addBlock'
   }
 
   protected getSelectedBlocks (): NeoInputBlock[] {
