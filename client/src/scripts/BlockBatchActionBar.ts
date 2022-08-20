@@ -34,7 +34,7 @@ abstract class BlockBatchActionBar {
         const actionMethod = this[lowerCaseLabel as keyof BlockBatchActionBar]
 
         if (typeof actionMethod === 'function') {
-          actionMethod(this.getSelectedBlocks())
+          actionMethod.bind(this)(this.getSelectedBlocks())
           this._refreshButtons()
         }
       })
