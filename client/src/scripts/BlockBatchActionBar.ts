@@ -1,10 +1,6 @@
 import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
 import { InputField, NeoInputField } from './types/InputField'
 
-interface ActivateEvent {
-  preventDefault: () => void
-}
-
 abstract class BlockBatchActionBar {
   public $bar: JQuery
   public $selectContainer: JQuery
@@ -30,7 +26,7 @@ abstract class BlockBatchActionBar {
     this.supportedActions().forEach(([label, _icon, _check]) => {
       const lowerCaseLabel = label.toLowerCase()
       this._$buttons[lowerCaseLabel] = $actions.find(`[data-bba-bn="button.${lowerCaseLabel}"]`)
-      this._$buttons[lowerCaseLabel].on('activate', (e: ActivateEvent) => {
+      this._$buttons[lowerCaseLabel].on('activate', (e: JQuery.Event) => {
         e.preventDefault()
         const actionMethod = this[lowerCaseLabel as keyof BlockBatchActionBar]
 
