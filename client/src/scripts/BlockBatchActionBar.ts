@@ -1,36 +1,91 @@
 import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
 import { InputField, NeoInputField } from './types/InputField'
 
+/**
+ * Settings for a `BlockBatchActionBar`.
+ */
 interface BlockBatchActionBarSettings {
   blockClass: string
   blockSelectedClass: string
   addBlockEvent: string
 }
 
+/**
+ * The event triggered when a new block is added to a block element field.
+ */
 interface AddBlockEvent {
   $block?: JQuery
   block: InputBlock
 }
 
+/**
+ * The mobile menu button for a `BlockBatchActionBar`.
+ */
 interface MenuButton extends JQuery {
   menubtn: () => void
 }
 
+/**
+ * The data used when refreshing the `BlockBatchActionBar` buttons.
+ */
 interface ButtonRefreshData {
   icon: string
   check: Function
   enable: boolean
 }
 
+/**
+ * A bar added to block element input fields for selecting all blocks and performing batch actions.
+ */
 abstract class BlockBatchActionBar {
+  /**
+   * The container for the select/buttons/menu components.
+   * @public
+   */
   public $bar: JQuery
+
+  /**
+   * The container for the select all checkbox.
+   * @public
+   */
   public $selectContainer: JQuery
+
+  /**
+   * The select all checkbox.
+   * @public
+   */
   public $select: JQuery
+
+  /**
+   * The container for the action buttons.
+   * @public
+   */
   public $buttonsContainer: JQuery
+
+  /**
+   * The container for the mobile menu.
+   * @public
+   */
   public $menuContainer: JQuery
+
+  /**
+   * The mobile menu.
+   * @public
+   */
   public $menu: JQuery
+
+  /**
+   * The action buttons.
+   * @private
+   */
   private _$buttons: Record<string, JQuery> = {}
 
+  /**
+   * The constructor.
+   * @param input - The block element `InputField`.
+   * @param settings - A `BlockBatchActionBarSettings` object.
+   * @public
+   */
   constructor (
     public readonly input: InputField,
     public readonly settings: BlockBatchActionBarSettings
@@ -59,6 +114,12 @@ abstract class BlockBatchActionBar {
     this._refreshButtons()
   }
 
+  /**
+   * Gets the supported batch actions for the block element input field.
+   * @returns an array of tuples containing the label, icon name, and function to check whether the
+   * action should be enabled.
+   * @protected
+   */
   protected supportedActions (): Array<[string, string, Function]> {
     return [
       ['Expand', 'expand', this.isBlockCollapsed.bind(this)],
@@ -69,18 +130,46 @@ abstract class BlockBatchActionBar {
     ]
   }
 
+  /**
+   * Checks whether a block is expanded.
+   * @param $block - A `JQuery` object representing an input block
+   * @returns whether `$block` is expanded.
+   * @protected
+   */
   protected abstract isBlockExpanded ($block: JQuery): boolean
 
+  /**
+   * Checks whether a block is collapsed.
+   * @param $block - A `JQuery` object representing an input block
+   * @returns whether `$block` is collapsed.
+   * @protected
+   */
   protected isBlockCollapsed ($block: JQuery): boolean {
     return !this.isBlockExpanded($block)
   }
 
+  /**
+   * Checks whether a block is enabled.
+   * @param $block - A `JQuery` object representing an input block
+   * @returns whether `$block` is enabled.
+   * @protected
+   */
   protected abstract isBlockEnabled ($block: JQuery): boolean
 
+  /**
+   * Checks whether a block is disabled.
+   * @param $block - A `JQuery` object representing an input block
+   * @returns whether `$block` is disabled.
+   * @protected
+   */
   protected isBlockDisabled ($block: JQuery): boolean {
     return !this.isBlockEnabled($block)
   }
 
+  /**
+   * Initialises the select all checkbox.
+   * @private
+   */
   private _initSelect (): void {
     this.$selectContainer = $('<div/>', {
       class: 'block-batch-action-bar_select',
@@ -146,6 +235,10 @@ abstract class BlockBatchActionBar {
     })
   }
 
+  /**
+   * Refreshes the enabled/disabled state of the action buttons, based on the selected block(s).
+   * @private
+   */
   private _refreshButtons (): void {
     const actions: Record<string, ButtonRefreshData> = {}
     const labels: string[] = []
@@ -171,12 +264,20 @@ abstract class BlockBatchActionBar {
     })
   }
 
+  /**
+   * Initialises the action buttons.
+   * @private
+   */
   private _initButtons (): void {
     this.$buttonsContainer = $('<div class="btngroup"/>').appendTo(this.$bar)
     this.supportedActions()
       .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo(this.$buttonsContainer))
   }
 
+  /**
+   * Initialises the mobile menu.
+   * @private
+   */
   private _initMenu (): void {
     this.$menuContainer = $('<div class="block-batch-action-bar_menu hidden"/>').appendTo(this.$bar)
     const $button = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
@@ -199,6 +300,14 @@ abstract class BlockBatchActionBar {
     })
   }
 
+  /**
+   * Generates an action button.
+   * @param label - the label to use on the button
+   * @param icon - the name of the icon to show on the button
+   * @param buttonClasses - the classes to use on the button element
+   * @returns a `JQuery` object representing the button
+   * @private
+   */
   private _generateAction (label: string, icon: string|null, buttonClasses?: string): JQuery {
     const isButton = typeof buttonClasses !== 'undefined'
     const lowerCaseLabel = label.toLowerCase()
@@ -218,24 +327,61 @@ abstract class BlockBatchActionBar {
     return $action
   }
 
+  /**
+   * @returns the selected `InputBlock`s on the block element field
+   * @protected
+   */
   protected abstract getSelectedBlocks (): InputBlock[]
 
+  /**
+   * Expands the given blocks.
+   * @param blocks - The `InputBlock`s to expand
+   * @public
+   */
   public expand (blocks: InputBlock[]): void {
     blocks.forEach((block) => block.expand())
   }
 
+  /**
+   * Collapses the given blocks.
+   * @param blocks - The `InputBlock`s to collapse
+   * @public
+   */
   public collapse (blocks: InputBlock[]): void {
     blocks.forEach((block) => block.collapse())
   }
 
+  /**
+   * Enables the given blocks.
+   * @param blocks - The `InputBlock`s to enable
+   * @public
+   */
   public abstract enable (blocks: InputBlock[]): void
 
+  /**
+   * Disables the given blocks.
+   * @param blocks - The `InputBlock`s to disable
+   * @public
+   */
   public abstract disable (blocks: InputBlock[]): void
 
+  /**
+   * Delete the given blocks.
+   * @param blocks - The `InputBlock`s to delete
+   * @public
+   */
   public abstract delete (blocks: InputBlock[]): void
 }
 
+/**
+ * A bar added to Matrix input fields for selecting all blocks and performing batch actions.
+ */
 class MatrixBatchActionBar extends BlockBatchActionBar {
+  /**
+   * The constructor.
+   * @param input - The Matrix `InputField`.
+   * @public
+   */
   constructor (public readonly input: InputField) {
     super(input, {
       blockClass: 'matrixblock',
@@ -244,14 +390,23 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
     })
   }
 
+  /**
+   * @inheritDoc
+   */
   protected isBlockExpanded ($block: JQuery): boolean {
     return !$block.hasClass('collapsed')
   }
 
+  /**
+   * @inheritDoc
+   */
   protected isBlockEnabled ($block: JQuery): boolean {
     return !$block.hasClass('disabled')
   }
 
+  /**
+   * @inheritDoc
+   */
   protected getSelectedBlocks (): MatrixInputBlock[] {
     return this.input.$container
       .find(`.${this.settings.blockClass}.${this.settings.blockSelectedClass}`)
@@ -259,14 +414,23 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
       .get()
   }
 
+  /**
+   * @inheritDoc
+   */
   public enable (blocks: MatrixInputBlock[]): void {
     blocks.forEach((block) => block.enable())
   }
 
+  /**
+   * @inheritDoc
+   */
   public disable (blocks: MatrixInputBlock[]): void {
     blocks.forEach((block) => block.disable())
   }
 
+  /**
+   * @inheritDoc
+   */
   public delete (blocks: MatrixInputBlock[]): void {
     if (window.confirm('Are you sure you want to delete the selected blocks?')) {
       blocks.forEach((block) => block.selfDestruct())
@@ -274,7 +438,15 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
   }
 }
 
+/**
+ * A bar added to Neo input fields for selecting all blocks and performing batch actions.
+ */
 class NeoBatchActionBar extends BlockBatchActionBar {
+  /**
+   * The constructor.
+   * @param input - The `NeoInputField`.
+   * @public
+   */
   constructor (public readonly input: NeoInputField) {
     super(input, {
       blockClass: 'ni_block',
@@ -283,26 +455,44 @@ class NeoBatchActionBar extends BlockBatchActionBar {
     })
   }
 
+  /**
+   * @inheritDoc
+   */
   protected isBlockExpanded ($block: JQuery): boolean {
     return $block.hasClass('is-expanded')
   }
 
+  /**
+   * @inheritDoc
+   */
   protected isBlockEnabled ($block: JQuery): boolean {
     return $block.hasClass('is-enabled')
   }
 
+  /**
+   * @inheritDoc
+   */
   protected getSelectedBlocks (): NeoInputBlock[] {
     return this.input.getBlocks().filter((block) => block.isSelected())
   }
 
+  /**
+   * @inheritDoc
+   */
   public enable (blocks: NeoInputBlock[]): void {
     blocks.find((block) => !block.isEnabled())?.enable()
   }
 
+  /**
+   * @inheritDoc
+   */
   public disable (blocks: NeoInputBlock[]): void {
     blocks.find((block) => block.isEnabled())?.disable()
   }
 
+  /**
+   * @inheritDoc
+   */
   public delete (blocks: NeoInputBlock[]): void {
     if (window.confirm('Are you sure you want to delete the selected blocks?')) {
       blocks.forEach((block) => this.input.removeBlock(block))
