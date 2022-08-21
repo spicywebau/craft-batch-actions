@@ -1,9 +1,8 @@
 import { NeoInputBlock } from './InputBlock'
 
-interface InputField {
+interface InputField extends GarnishComponent {
   $container: JQuery
   blockSelect: any
-  on: any
 }
 
 interface NeoInputField extends InputField {

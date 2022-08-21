@@ -2,5 +2,5 @@
  * An instance of Craft.
  */
 declare const Craft: {
-  MatrixInput: any
+  MatrixInput: GarnishComponent
 }
