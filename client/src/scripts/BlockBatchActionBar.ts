@@ -189,7 +189,12 @@ abstract class BlockBatchActionBar {
         // if it isn't checked then any new block doesn't need to be checked
         this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
           const $block = e.$block ?? e.block.$container
-          $block.toggleClass(this.input.blockSelect.settings.selectedClass, this.$select.hasClass('checked'))
+
+          if (this.$select.hasClass('checked')) {
+            $block.addClass(this.input.blockSelect.settings.selectedClass)
+            this.input.blockSelect.selectItem($block, false, true)
+            this._refreshButtons()
+          }
         })
         initialised = true
       }

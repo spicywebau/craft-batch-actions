@@ -23,6 +23,7 @@ interface InputBlockSelect extends GarnishComponent {
   $selectedItems: JQuery
   deselectAll: () => void
   selectAll: () => void
+  selectItem: ($item: JQuery, focus: boolean, preventScroll: boolean) => void
   settings: {
     selectedClass: string
   }
