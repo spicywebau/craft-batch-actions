@@ -2,12 +2,12 @@
     margin-bottom: var(--s);
 
     > .btngroup,
-    > .checkbox,
+    &_select,
     &_menu {
         display: inline-block;
     }
 
-    > .checkbox {
+    &_select {
         margin-right: var(--s);
     }
 }

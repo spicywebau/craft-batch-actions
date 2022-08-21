@@ -7,7 +7,8 @@ interface ActivateEvent {
 
 abstract class BlockBatchActionBar {
   public $bar: JQuery
-  public $selectCheckbox: JQuery
+  public $selectContainer: JQuery
+  public $select: JQuery
   public $buttons: JQuery
   public $menuContainer: JQuery
   public $menu: JQuery
@@ -20,7 +21,7 @@ abstract class BlockBatchActionBar {
     protected readonly blockSelectedClass: string
   ) {
     this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
-    this.$selectCheckbox = this._initSelection().appendTo(this.$bar)
+    this._initSelect()
     this.$buttons = this._generateButtons().appendTo(this.$bar)
     this.$menuContainer = this._generateMenu().appendTo(this.$bar)
 
@@ -65,38 +66,62 @@ abstract class BlockBatchActionBar {
     return !this.isBlockEnabled($block)
   }
 
-  private _initSelection (): JQuery {
-    const $checkbox = $('<div class="checkbox">')
+  private _initSelect (): void {
+    this.$selectContainer = $('<div/>', {
+      class: 'block-batch-action-bar_select',
+      role: 'checkbox',
+      tabindex: 0,
+      'aria-label': 'Select all',
+      'aria-checked': 'false'
+    }).appendTo(this.$bar)
+    this.$select = $('<div class="checkbox">').appendTo(this.$selectContainer)
     let handlingCheckbox = false
     let initialised = false
 
-    $checkbox.on('mousedown', (e) => {
+    const selectHandler: (e: JQuery.Event) => void = (e) => {
+      if (!initialised) {
+        // The add block event is only initialised on the first check of the select checkbox, since
+        // if it isn't checked then any new block doesn't need to be checked
+        this.input.on(this.addBlockEvent, (e: any) => {
+          const $block = e.$block ?? e.block.$container
+          $block.toggleClass(this.input.blockSelect.settings.selectedClass, this.$select.hasClass('checked'))
+        })
+        initialised = true
+      }
+
+      handlingCheckbox = true
+      this.$select.toggleClass('checked').removeClass('indeterminate')
+      const selectAll = this.$select.hasClass('checked')
+
+      if (selectAll) {
+        this.input.blockSelect.selectAll()
+        this.$selectContainer.attr('aria-checked', 'true')
+      } else {
+        this.input.blockSelect.deselectAll()
+        this.$selectContainer.attr('aria-checked', 'false')
+      }
+    }
+
+    this.$selectContainer.on('mousedown', (e) => {
       if (e.which === Garnish.PRIMARY_CLICK) {
-        if (!initialised) {
-          // Initialise the add block event
-          this.input.on(this.addBlockEvent, (e: any) => {
-            const $block = e.$block ?? e.block.$container
-            $block.toggleClass(this.input.blockSelect.settings.selectedClass, $checkbox.hasClass('checked'))
-          })
-          initialised = true
-        }
-
-        handlingCheckbox = true
-        $checkbox.toggleClass('checked')
-        const selectAll = $checkbox.hasClass('checked')
-
-        if (selectAll) {
-          this.input.blockSelect.selectAll()
-        } else {
-          this.input.blockSelect.deselectAll()
-        }
+        selectHandler(e)
+      }
+    })
+    this.$selectContainer.on('keydown', (e) => {
+      if (e.keyCode === Garnish.SPACE_KEY) {
+        e.preventDefault()
+        selectHandler(e)
       }
     })
 
     this.input.blockSelect.on('selectionChange', (_: Event) => {
       if (!handlingCheckbox) {
         // Any manual change to block selection invalidates the select all state
-        $checkbox.removeClass('checked')
+        this.$select.removeClass('checked')
+
+        const anyBlocksChecked = this.input.blockSelect.$selectedItems.length > 0
+        this.$select.toggleClass('indeterminate', anyBlocksChecked)
+        this.$selectContainer.attr('aria-checked', anyBlocksChecked ? 'mixed' : 'false')
       } else {
         // Set our checkbox handling as being complete
         handlingCheckbox = false
@@ -104,8 +129,6 @@ abstract class BlockBatchActionBar {
 
       this._refreshButtons()
     })
-
-    return $checkbox
   }
 
   private _refreshButtons (): void {
