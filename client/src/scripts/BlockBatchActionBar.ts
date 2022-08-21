@@ -5,7 +5,7 @@ abstract class BlockBatchActionBar {
   public $bar: JQuery
   public $selectContainer: JQuery
   public $select: JQuery
-  public $buttons: JQuery
+  public $buttonsContainer: JQuery
   public $menuContainer: JQuery
   public $menu: JQuery
   protected addBlockEvent: string
@@ -18,8 +18,8 @@ abstract class BlockBatchActionBar {
   ) {
     this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
     this._initSelect()
-    this.$buttons = this._generateButtons().appendTo(this.$bar)
-    this.$menuContainer = this._generateMenu().appendTo(this.$bar)
+    this._initButtons()
+    this._initMenu()
 
     const $actions = this.$bar.add(this.$menu)
 
@@ -152,20 +152,18 @@ abstract class BlockBatchActionBar {
     })
   }
 
-  private _generateButtons (): JQuery {
-    const $bar = $('<div class="btngroup"/>')
+  private _initButtons (): void {
+    this.$buttonsContainer = $('<div class="btngroup"/>').appendTo(this.$bar)
     this.supportedActions()
-      .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo($bar))
-
-    return $bar
+      .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo(this.$buttonsContainer))
   }
 
-  private _generateMenu (): JQuery {
-    const $container = $('<div class="block-batch-action-bar_menu hidden"/>')
+  private _initMenu (): void {
+    this.$menuContainer = $('<div class="block-batch-action-bar_menu hidden"/>').appendTo(this.$bar)
     const $button: any = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
-      .appendTo($container)
+      .appendTo(this.$menuContainer)
     this.$menu = $('<div class="menu"/>')
-      .appendTo($container)
+      .appendTo(this.$menuContainer)
     const $ul = $('<ul class="padded"/>')
       .appendTo(this.$menu)
 
@@ -173,15 +171,13 @@ abstract class BlockBatchActionBar {
       .forEach(([label, icon]) => $('<li/>').append(this._generateAction(label, icon)).appendTo($ul))
 
     $button.menubtn()
-    let buttonsWidth = this.$buttons.width() ?? 0
+    let buttonsWidth = this.$buttonsContainer.width() ?? 0
     this.$bar.on('resize', () => {
-      buttonsWidth ||= this.$buttons.width() ?? 0
+      buttonsWidth ||= this.$buttonsContainer.width() ?? 0
       const isMobile = (this.$bar.width() ?? 0) < buttonsWidth
-      this.$buttons.toggleClass('hidden', isMobile)
-      $container.toggleClass('hidden', !isMobile)
+      this.$buttonsContainer.toggleClass('hidden', isMobile)
+      this.$menuContainer.toggleClass('hidden', !isMobile)
     })
-
-    return $container
   }
 
   private _generateAction (label: string, icon: string|null, buttonClasses?: string): JQuery {
