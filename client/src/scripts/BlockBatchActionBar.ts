@@ -97,6 +97,7 @@ abstract class BlockBatchActionBar {
 
     const $actions = this.$bar.add(this.$menu)
 
+    // Register event handlers for each action button
     this.supportedActions().forEach(([label, _icon, _check]) => {
       const lowerCaseLabel = label.toLowerCase()
       this._$buttons[lowerCaseLabel] = $actions.find(`[data-bba-bn="button.${lowerCaseLabel}"]`)
