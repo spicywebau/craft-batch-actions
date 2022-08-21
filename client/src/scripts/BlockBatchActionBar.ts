@@ -105,7 +105,7 @@ abstract class BlockBatchActionBar {
         const actionMethod = this[lowerCaseLabel as keyof BlockBatchActionBar]
 
         if (typeof actionMethod === 'function') {
-          actionMethod.bind(this)(this.getSelectedBlocks())
+          actionMethod.bind(this)()
           this._refreshButtons()
         }
       })
@@ -334,43 +334,38 @@ abstract class BlockBatchActionBar {
   protected abstract getSelectedBlocks (): InputBlock[]
 
   /**
-   * Expands the given blocks.
-   * @param blocks - The `InputBlock`s to expand
+   * Expands the selected blocks.
    * @public
    */
-  public expand (blocks: InputBlock[]): void {
-    blocks.forEach((block) => block.expand())
+  public expand (): void {
+    this.getSelectedBlocks().forEach((block) => block.expand())
   }
 
   /**
-   * Collapses the given blocks.
-   * @param blocks - The `InputBlock`s to collapse
-   * @public
+   * Collapses the selected blocks.
+   * @protected
    */
-  public collapse (blocks: InputBlock[]): void {
-    blocks.forEach((block) => block.collapse())
+  protected collapse (): void {
+    this.getSelectedBlocks().forEach((block) => block.collapse())
   }
 
   /**
-   * Enables the given blocks.
-   * @param blocks - The `InputBlock`s to enable
-   * @public
+   * Enables the selected blocks.
+   * @protected
    */
-  public abstract enable (blocks: InputBlock[]): void
+  protected abstract enable (): void
 
   /**
-   * Disables the given blocks.
-   * @param blocks - The `InputBlock`s to disable
-   * @public
+   * Disables the selected blocks.
+   * @protected
    */
-  public abstract disable (blocks: InputBlock[]): void
+  protected abstract disable (): void
 
   /**
-   * Delete the given blocks.
-   * @param blocks - The `InputBlock`s to delete
-   * @public
+   * Deletes the selected blocks.
+   * @protected
    */
-  public abstract delete (blocks: InputBlock[]): void
+  protected abstract delete (): void
 }
 
 /**
@@ -417,23 +412,23 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
   /**
    * @inheritDoc
    */
-  public enable (blocks: MatrixInputBlock[]): void {
-    blocks.forEach((block) => block.enable())
+  protected enable (): void {
+    this.getSelectedBlocks().forEach((block) => block.enable())
   }
 
   /**
    * @inheritDoc
    */
-  public disable (blocks: MatrixInputBlock[]): void {
-    blocks.forEach((block) => block.disable())
+  protected disable (): void {
+    this.getSelectedBlocks().forEach((block) => block.disable())
   }
 
   /**
    * @inheritDoc
    */
-  public delete (blocks: MatrixInputBlock[]): void {
+  protected delete (): void {
     if (window.confirm('Are you sure you want to delete the selected blocks?')) {
-      blocks.forEach((block) => block.selfDestruct())
+      this.getSelectedBlocks().forEach((block) => block.selfDestruct())
     }
   }
 }
@@ -479,23 +474,23 @@ class NeoBatchActionBar extends BlockBatchActionBar {
   /**
    * @inheritDoc
    */
-  public enable (blocks: NeoInputBlock[]): void {
-    blocks.find((block) => !block.isEnabled())?.enable()
+  protected enable (): void {
+    this.getSelectedBlocks().find((block) => !block.isEnabled())?.enable()
   }
 
   /**
    * @inheritDoc
    */
-  public disable (blocks: NeoInputBlock[]): void {
-    blocks.find((block) => block.isEnabled())?.disable()
+  protected disable (): void {
+    this.getSelectedBlocks().find((block) => block.isEnabled())?.disable()
   }
 
   /**
    * @inheritDoc
    */
-  public delete (blocks: NeoInputBlock[]): void {
+  protected delete (): void {
     if (window.confirm('Are you sure you want to delete the selected blocks?')) {
-      blocks.forEach((block) => this.input.removeBlock(block))
+      this.getSelectedBlocks().forEach((block) => this.input.removeBlock(block))
     }
   }
 }
