@@ -20,6 +20,7 @@ interface NeoInputField extends InputField {
  * A `Garnish.Select` instance on a block element input field.
  */
 interface InputBlockSelect extends GarnishComponent {
+  $items: JQuery
   $selectedItems: JQuery
   deselectAll: () => void
   selectAll: () => void

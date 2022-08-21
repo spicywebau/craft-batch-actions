@@ -1,7 +1,7 @@
 /**
  * A block element field input block.
  */
-interface InputBlock {
+interface InputBlock extends GarnishComponent {
   $container: JQuery
   expand: () => void
   collapse: () => void
@@ -14,6 +14,7 @@ interface InputBlock {
  */
 interface MatrixInputBlock extends InputBlock {
   selfDestruct: () => boolean
+  actionDisclosure: GarnishComponent
 }
 
 /**

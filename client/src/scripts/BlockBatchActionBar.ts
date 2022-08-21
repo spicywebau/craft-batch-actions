@@ -15,7 +15,7 @@ interface BlockBatchActionBarSettings {
  */
 interface AddBlockEvent {
   $block?: JQuery
-  block: InputBlock
+  block: NeoInputBlock
 }
 
 /**
@@ -107,12 +107,13 @@ abstract class BlockBatchActionBar {
 
         if (typeof actionMethod === 'function') {
           actionMethod.bind(this)()
-          this._refreshButtons()
+          this.refreshButtons()
         }
       })
     })
 
-    this._refreshButtons()
+    this.refreshButtons()
+    this.registerEventListeners()
   }
 
   /**
@@ -193,7 +194,7 @@ abstract class BlockBatchActionBar {
           if (this.$select.hasClass('checked')) {
             $block.addClass(this.input.blockSelect.settings.selectedClass)
             this.input.blockSelect.selectItem($block, false, true)
-            this._refreshButtons()
+            this.refreshButtons()
           }
         })
         initialised = true
@@ -237,15 +238,15 @@ abstract class BlockBatchActionBar {
         handlingCheckbox = false
       }
 
-      this._refreshButtons()
+      this.refreshButtons()
     })
   }
 
   /**
    * Refreshes the enabled/disabled state of the action buttons, based on the selected block(s).
-   * @private
+   * @protected
    */
-  private _refreshButtons (): void {
+  protected refreshButtons (): void {
     const actions: Record<string, ButtonRefreshData> = {}
     const labels: string[] = []
 
@@ -269,6 +270,12 @@ abstract class BlockBatchActionBar {
       this._$buttons[label.toLowerCase()].toggleClass('disabled', !actions[label].enable)
     })
   }
+
+  /**
+   * Registers listeners for events where `BlockBatchActionBar` actions should be executed.
+   * @protected
+   */
+  protected registerEventListeners (): void {}
 
   /**
    * Initialises the action buttons.
@@ -395,6 +402,21 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
   /**
    * @inheritDoc
    */
+  protected registerEventListeners (): void {
+    const settingsMenuListener: (block: MatrixInputBlock) => void = (block) => {
+      block.actionDisclosure.on('hide', () => this.refreshButtons())
+    }
+    this.input.blockSelect.$items.each((_, block: HTMLElement) => settingsMenuListener($(block).data('block')))
+    this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
+      // Craft triggers the `blockAdded` event after attaching the HTML element to the DOM, but
+      // before actually creating the `MatrixBlock` instance
+      setTimeout(() => settingsMenuListener(e.$block?.data('block')), 250)
+    })
+  }
+
+  /**
+   * @inheritDoc
+   */
   protected isBlockExpanded ($block: JQuery): boolean {
     return !$block.hasClass('collapsed')
   }
@@ -455,6 +477,18 @@ class NeoBatchActionBar extends BlockBatchActionBar {
       blockSelectedClass: 'is-selected',
       addBlockEvent: 'addBlock'
     })
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected registerEventListeners (): void {
+    const blockEventListener: (block: NeoInputBlock) => void = (block) => {
+      block.on('toggleExpansion toggleEnabled', () => this.refreshButtons())
+    }
+    this.input.getBlocks().forEach(blockEventListener)
+    this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => blockEventListener(e.block))
+    this.input.on('removeBlock', () => this.refreshButtons())
   }
 
   /**
