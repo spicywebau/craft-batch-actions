@@ -12,6 +12,16 @@ interface AddBlockEvent {
   block: InputBlock
 }
 
+interface MenuButton extends JQuery {
+  menubtn: () => void
+}
+
+interface ButtonRefreshData {
+  icon: string
+  check: Function
+  enable: boolean
+}
+
 abstract class BlockBatchActionBar {
   public $bar: JQuery
   public $selectContainer: JQuery
@@ -137,7 +147,7 @@ abstract class BlockBatchActionBar {
   }
 
   private _refreshButtons (): void {
-    const actions: Record<string, any> = {}
+    const actions: Record<string, ButtonRefreshData> = {}
     const labels: string[] = []
 
     this.supportedActions().forEach(([label, icon, check]) => {
@@ -157,7 +167,7 @@ abstract class BlockBatchActionBar {
     })
 
     labels.forEach((label) => {
-      this._$buttons[label.toLowerCase()].toggleClass('disabled', actions[label].enable === false)
+      this._$buttons[label.toLowerCase()].toggleClass('disabled', !actions[label].enable)
     })
   }
 
@@ -169,8 +179,8 @@ abstract class BlockBatchActionBar {
 
   private _initMenu (): void {
     this.$menuContainer = $('<div class="block-batch-action-bar_menu hidden"/>').appendTo(this.$bar)
-    const $button: any = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
-      .appendTo(this.$menuContainer)
+    const $button = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
+      .appendTo(this.$menuContainer) as MenuButton
     this.$menu = $('<div class="menu"/>')
       .appendTo(this.$menuContainer)
     const $ul = $('<ul class="padded"/>')
