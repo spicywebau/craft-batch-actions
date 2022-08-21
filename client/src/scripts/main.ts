@@ -12,11 +12,13 @@ interface NeoAfterInitEvent {
 
 const actionBars = []
 
-Garnish.on(Craft.MatrixInput, 'afterInit', (e: MatrixAfterInitEvent) => {
-  actionBars.push(new MatrixBatchActionBar(e.target))
-})
+if (typeof Craft.MatrixInput !== 'undefined') {
+  Garnish.on(Craft.MatrixInput, 'afterInit', (e: MatrixAfterInitEvent) => {
+    actionBars.push(new MatrixBatchActionBar(e.target))
+  })
+}
 
-if (typeof Neo?.Input !== 'undefined') {
+if (typeof Neo !== 'undefined' && typeof Neo.Input !== 'undefined') {
   Garnish.on(Neo.Input, 'afterInit', (e: NeoAfterInitEvent) => {
     // Neo's block select was private prior to Neo 3.3.4
     // TODO: remove this check on Craft 5
