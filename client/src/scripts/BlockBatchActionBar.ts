@@ -1,6 +1,12 @@
 import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
 import { InputField, NeoInputField } from './types/InputField'
 
+interface BlockBatchActionBarSettings {
+  blockClass: string
+  blockSelectedClass: string
+  addBlockEvent: string
+}
+
 abstract class BlockBatchActionBar {
   public $bar: JQuery
   public $selectContainer: JQuery
@@ -8,13 +14,11 @@ abstract class BlockBatchActionBar {
   public $buttonsContainer: JQuery
   public $menuContainer: JQuery
   public $menu: JQuery
-  protected addBlockEvent: string
   private _$buttons: Record<string, JQuery> = {}
 
   constructor (
     public readonly input: InputField,
-    protected readonly blockClass: string,
-    protected readonly blockSelectedClass: string
+    public readonly settings: BlockBatchActionBarSettings
   ) {
     this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
     this._initSelect()
@@ -78,7 +82,7 @@ abstract class BlockBatchActionBar {
       if (!initialised) {
         // The add block event is only initialised on the first check of the select checkbox, since
         // if it isn't checked then any new block doesn't need to be checked
-        this.input.on(this.addBlockEvent, (e: any) => {
+        this.input.on(this.settings.addBlockEvent, (e: any) => {
           const $block = e.$block ?? e.block.$container
           $block.toggleClass(this.input.blockSelect.settings.selectedClass, this.$select.hasClass('checked'))
         })
@@ -218,8 +222,11 @@ abstract class BlockBatchActionBar {
 
 class MatrixBatchActionBar extends BlockBatchActionBar {
   constructor (public readonly input: InputField) {
-    super(input, 'matrixblock', 'sel')
-    super.addBlockEvent = 'blockAdded'
+    super(input, {
+      blockClass: 'matrixblock',
+      blockSelectedClass: 'sel',
+      addBlockEvent: 'blockAdded'
+    })
   }
 
   protected isBlockExpanded ($block: JQuery): boolean {
@@ -232,7 +239,7 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
 
   protected getSelectedBlocks (): MatrixInputBlock[] {
     return this.input.$container
-      .find(`.${this.blockClass}.${this.blockSelectedClass}`)
+      .find(`.${this.settings.blockClass}.${this.settings.blockSelectedClass}`)
       .map((_, blockEl) => $(blockEl).data('block'))
       .get()
   }
@@ -254,8 +261,11 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
 
 class NeoBatchActionBar extends BlockBatchActionBar {
   constructor (public readonly input: NeoInputField) {
-    super(input, 'ni_block', 'is-selected')
-    super.addBlockEvent = 'addBlock'
+    super(input, {
+      blockClass: 'ni_block',
+      blockSelectedClass: 'is-selected',
+      addBlockEvent: 'addBlock'
+    })
   }
 
   protected isBlockExpanded ($block: JQuery): boolean {
