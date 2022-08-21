@@ -192,6 +192,7 @@ abstract class BlockBatchActionBar {
           const $block = e.$block ?? e.block.$container
 
           if (this.$select.hasClass('checked')) {
+            handlingCheckbox = true
             $block.addClass(this.input.blockSelect.settings.selectedClass)
             this.input.blockSelect.selectItem($block, false, true)
             this.refreshButtons()
