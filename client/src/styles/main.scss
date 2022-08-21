@@ -1,13 +1,30 @@
 .block-batch-action-bar {
     margin-bottom: var(--s);
 
-    > .btngroup,
     &_select,
+    &_buttons,
     &_menu {
         display: inline-block;
     }
 
     &_select {
-        margin-right: var(--s);
+        margin-right: 1px;
+        padding: 9px;
+        height: 34px;
+        transform: translateY(2px);
+        background-color: rgba(96, 125, 159, 0.25);
+        border-top-left-radius: var(--large-border-radius);
+        border-bottom-left-radius: var(--large-border-radius);
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba(96, 125, 159, 0.3);
+        }
+    }
+
+    &_buttons > .btn:first-child,
+    &_menu > .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
 }

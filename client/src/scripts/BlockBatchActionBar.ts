@@ -275,7 +275,7 @@ abstract class BlockBatchActionBar {
    * @private
    */
   private _initButtons (): void {
-    this.$buttonsContainer = $('<div class="btngroup"/>').appendTo(this.$bar)
+    this.$buttonsContainer = $('<div class="block-batch-action-bar_buttons btngroup"/>').appendTo(this.$bar)
     this.supportedActions()
       .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo(this.$buttonsContainer))
   }
@@ -297,10 +297,11 @@ abstract class BlockBatchActionBar {
       .forEach(([label, icon]) => $('<li/>').append(this._generateAction(label, icon)).appendTo($ul))
 
     $button.menubtn()
-    let buttonsWidth = this.$buttonsContainer.width() ?? 0
+    const selectWidth = (this.$selectContainer.outerWidth() as number) + 2
+    let buttonsWidth = this.$buttonsContainer.width() as number
     this.$bar.on('resize', () => {
-      buttonsWidth ||= this.$buttonsContainer.width() ?? 0
-      const isMobile = (this.$bar.width() ?? 0) < buttonsWidth
+      buttonsWidth ||= this.$buttonsContainer.width() as number
+      const isMobile = (this.$bar.width() as number) - selectWidth < buttonsWidth
       this.$buttonsContainer.toggleClass('hidden', isMobile)
       this.$menuContainer.toggleClass('hidden', !isMobile)
     })
