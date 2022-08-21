@@ -29,6 +29,9 @@
     "craftcms/cms": "^4.2.0",
     "php": "^8.0.2"
   },
+  "suggest": {
+    "spicyweb/craft-neo": "Supports Neo 3.3.4 or later"
+  },
   "autoload": {
     "psr-4": {
         "spicyweb\\blockbatchactions\\": "src/"

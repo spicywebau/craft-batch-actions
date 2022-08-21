@@ -18,6 +18,10 @@ Garnish.on(Craft.MatrixInput, 'afterInit', (e: MatrixAfterInitEvent) => {
 
 if (typeof Neo?.Input !== 'undefined') {
   Garnish.on(Neo.Input, 'afterInit', (e: NeoAfterInitEvent) => {
-    actionBars.push(new NeoBatchActionBar(e.target))
+    // Neo's block select was private prior to Neo 3.3.4
+    // TODO: remove this check on Craft 5
+    if (typeof e.target.blockSelect !== 'undefined') {
+      actionBars.push(new NeoBatchActionBar(e.target))
+    }
   })
 }
