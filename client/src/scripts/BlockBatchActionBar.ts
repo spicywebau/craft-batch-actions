@@ -7,6 +7,11 @@ interface BlockBatchActionBarSettings {
   addBlockEvent: string
 }
 
+interface AddBlockEvent {
+  $block?: JQuery
+  block: InputBlock
+}
+
 abstract class BlockBatchActionBar {
   public $bar: JQuery
   public $selectContainer: JQuery
@@ -82,7 +87,7 @@ abstract class BlockBatchActionBar {
       if (!initialised) {
         // The add block event is only initialised on the first check of the select checkbox, since
         // if it isn't checked then any new block doesn't need to be checked
-        this.input.on(this.settings.addBlockEvent, (e: any) => {
+        this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
           const $block = e.$block ?? e.block.$container
           $block.toggleClass(this.input.blockSelect.settings.selectedClass, this.$select.hasClass('checked'))
         })

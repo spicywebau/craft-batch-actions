@@ -1,4 +1,5 @@
 interface InputBlock {
+  $container: JQuery
   expand: () => void
   collapse: () => void
   enable: () => void
