@@ -5,8 +5,6 @@ import { InputField, NeoInputField } from './types/InputField'
  * Settings for a `BlockBatchActionBar`.
  */
 interface BlockBatchActionBarSettings {
-  blockClass: string
-  blockSelectedClass: string
   addBlockEvent: string
 }
 
@@ -394,8 +392,6 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
    */
   constructor (public readonly input: InputField) {
     super(input, {
-      blockClass: 'matrixblock',
-      blockSelectedClass: 'sel',
       addBlockEvent: 'blockAdded'
     })
   }
@@ -433,8 +429,7 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
    * @inheritDoc
    */
   protected getSelectedBlocks (): MatrixInputBlock[] {
-    return this.input.$container
-      .find(`.${this.settings.blockClass}.${this.settings.blockSelectedClass}`)
+    return this.input.blockSelect.$selectedItems
       .map((_, blockEl) => $(blockEl).data('block'))
       .get()
   }
@@ -474,8 +469,6 @@ class NeoBatchActionBar extends BlockBatchActionBar {
    */
   constructor (public readonly input: NeoInputField) {
     super(input, {
-      blockClass: 'ni_block',
-      blockSelectedClass: 'is-selected',
       addBlockEvent: 'addBlock'
     })
   }
