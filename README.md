@@ -1,3 +1,5 @@
+<img src="src/icon.svg" width="100">
+
 # Batch Actions
 
 A Craft CMS plugin for performing batch actions on Matrix and Neo blocks. Currently in development.
