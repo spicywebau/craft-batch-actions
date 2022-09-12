@@ -2,9 +2,9 @@ import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
 import { InputField, NeoInputField } from './types/InputField'
 
 /**
- * Settings for a `BlockBatchActionBar`.
+ * Settings for a `BatchActionBar`.
  */
-interface BlockBatchActionBarSettings {
+interface BatchActionBarSettings {
   addBlockEvent: string
 }
 
@@ -17,14 +17,14 @@ interface AddBlockEvent {
 }
 
 /**
- * The mobile menu button for a `BlockBatchActionBar`.
+ * The mobile menu button for a `BatchActionBar`.
  */
 interface MenuButton extends JQuery {
   menubtn: () => void
 }
 
 /**
- * The data used when refreshing the `BlockBatchActionBar` buttons.
+ * The data used when refreshing the `BatchActionBar` buttons.
  */
 interface ButtonRefreshData {
   icon: string
@@ -35,7 +35,7 @@ interface ButtonRefreshData {
 /**
  * A bar added to block element input fields for selecting all blocks and performing batch actions.
  */
-abstract class BlockBatchActionBar {
+abstract class BatchActionBar {
   /**
    * The container for the select/buttons/menu components.
    * @public
@@ -81,14 +81,14 @@ abstract class BlockBatchActionBar {
   /**
    * The constructor.
    * @param input - The block element `InputField`.
-   * @param settings - A `BlockBatchActionBarSettings` object.
+   * @param settings - A `BatchActionBarSettings` object.
    * @public
    */
   constructor (
     public readonly input: InputField,
-    public readonly settings: BlockBatchActionBarSettings
+    public readonly settings: BatchActionBarSettings
   ) {
-    this.$bar = $('<div class="block-batch-action-bar"/>').prependTo(input.$container)
+    this.$bar = $('<div class="batch-action-bar"/>').prependTo(input.$container)
     this._initSelect()
     this._initButtons()
     this._initMenu()
@@ -101,7 +101,7 @@ abstract class BlockBatchActionBar {
       this._$buttons[lowerCaseLabel] = $actions.find(`[data-bba-bn="button.${lowerCaseLabel}"]`)
       this._$buttons[lowerCaseLabel].on('activate', (e: JQuery.Event) => {
         e.preventDefault()
-        const actionMethod = this[lowerCaseLabel as keyof BlockBatchActionBar]
+        const actionMethod = this[lowerCaseLabel as keyof BatchActionBar]
 
         if (typeof actionMethod === 'function') {
           actionMethod.bind(this)()
@@ -172,7 +172,7 @@ abstract class BlockBatchActionBar {
    */
   private _initSelect (): void {
     this.$selectContainer = $('<div/>', {
-      class: 'block-batch-action-bar_select',
+      class: 'batch-action-bar_select',
       role: 'checkbox',
       tabindex: 0,
       'aria-label': 'Select all',
@@ -271,7 +271,7 @@ abstract class BlockBatchActionBar {
   }
 
   /**
-   * Registers listeners for events where `BlockBatchActionBar` actions should be executed.
+   * Registers listeners for events where `BatchActionBar` actions should be executed.
    * @protected
    */
   protected registerEventListeners (): void {}
@@ -281,7 +281,7 @@ abstract class BlockBatchActionBar {
    * @private
    */
   private _initButtons (): void {
-    this.$buttonsContainer = $('<div class="block-batch-action-bar_buttons btngroup"/>').appendTo(this.$bar)
+    this.$buttonsContainer = $('<div class="batch-action-bar_buttons btngroup"/>').appendTo(this.$bar)
     this.supportedActions()
       .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo(this.$buttonsContainer))
   }
@@ -291,7 +291,7 @@ abstract class BlockBatchActionBar {
    * @private
    */
   private _initMenu (): void {
-    this.$menuContainer = $('<div class="block-batch-action-bar_menu hidden"/>').appendTo(this.$bar)
+    this.$menuContainer = $('<div class="batch-action-bar_menu hidden"/>').appendTo(this.$bar)
     const $button = $('<button type="button" class="btn settings icon menubtn">Actions</button>')
       .appendTo(this.$menuContainer) as MenuButton
     this.$menu = $('<div class="menu"/>')
@@ -384,7 +384,7 @@ abstract class BlockBatchActionBar {
 /**
  * A bar added to Matrix input fields for selecting all blocks and performing batch actions.
  */
-class MatrixBatchActionBar extends BlockBatchActionBar {
+class MatrixBatchActionBar extends BatchActionBar {
   /**
    * The constructor.
    * @param input - The Matrix `InputField`.
@@ -461,7 +461,7 @@ class MatrixBatchActionBar extends BlockBatchActionBar {
 /**
  * A bar added to Neo input fields for selecting all blocks and performing batch actions.
  */
-class NeoBatchActionBar extends BlockBatchActionBar {
+class NeoBatchActionBar extends BatchActionBar {
   /**
    * The constructor.
    * @param input - The `NeoInputField`.

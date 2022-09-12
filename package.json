@@ -1,5 +1,5 @@
 {
-  "name": "craft-block-batch-actions",
+  "name": "craft-batch-actions",
   "version": "1.0.0",
   "description": "A Craft CMS plugin for performing batch actions on Matrix and Neo blocks",
   "private": true,
@@ -10,9 +10,9 @@
   "author": "Spicy Web",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/spicywebau/craft-block-batch-actions/issues"
+    "url": "https://github.com/spicywebau/craft-batch-actions/issues"
   },
-  "homepage": "https://github.com/spicywebau/craft-block-batch-actions#readme",
+  "homepage": "https://github.com/spicywebau/craft-batch-actions#readme",
   "devDependencies": {
     "@types/jquery": "^3.5.14",
     "css-loader": "^6.7.1",

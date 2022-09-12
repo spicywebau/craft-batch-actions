@@ -1,25 +1,25 @@
 <?php
 
-namespace spicyweb\blockbatchactions\assets;
+namespace spicyweb\batchactions\assets;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * Class BlockBatchActionsAsset
+ * Class BatchActionsAsset
  *
- * @package spicyweb\blockbatchactions\assets
+ * @package spicyweb\batchactions\assets
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 1.0.0
  */
-class BlockBatchActionsAsset extends AssetBundle
+class BatchActionsAsset extends AssetBundle
 {
     /**
      * @inheritdoc
      */
     public function init(): void
     {
-        $this->sourcePath = '@spicyweb/blockbatchactions/resources';
+        $this->sourcePath = '@spicyweb/batchactions/resources';
 
         $this->depends = [
             CpAsset::class,

@@ -1,4 +1,4 @@
-import { MatrixBatchActionBar, NeoBatchActionBar } from './BlockBatchActionBar'
+import { MatrixBatchActionBar, NeoBatchActionBar } from './BatchActionBar'
 import { InputField, NeoInputField } from './types/InputField'
 import '../styles/main.scss'
 

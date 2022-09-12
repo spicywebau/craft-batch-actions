@@ -1,18 +1,18 @@
 <?php
 
-namespace spicyweb\blockbatchactions;
+namespace spicyweb\batchactions;
 
 use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\controllers\ElementsController;
 use craft\events\DefineElementEditorHtmlEvent;
-use spicyweb\blockbatchactions\assets\BlockBatchActionsAsset;
+use spicyweb\batchactions\assets\BatchActionsAsset;
 use yii\base\Event;
 
 /**
  * Class Plugin
  *
- * @package spicyweb\blockbatchactions
+ * @package spicyweb\batchactions
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 1.0.0
  */
@@ -32,7 +32,7 @@ class Plugin extends BasePlugin
                 ElementsController::class,
                 ElementsController::EVENT_DEFINE_EDITOR_CONTENT,
                 function (DefineElementEditorHtmlEvent $e) {
-                    Craft::$app->getView()->registerAssetBundle(BlockBatchActionsAsset::class);
+                    Craft::$app->getView()->registerAssetBundle(BatchActionsAsset::class);
                 }
             );
         }
