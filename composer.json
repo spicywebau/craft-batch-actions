@@ -1,7 +1,7 @@
 {
   "name": "spicyweb/craft-batch-actions",
   "description": "A Craft CMS plugin for performing batch actions on Matrix and Neo blocks",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "craft-plugin",
   "keywords": [
     "cms",
