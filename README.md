@@ -2,7 +2,49 @@
 
 # Batch Actions
 
-A Craft CMS plugin for performing batch actions on Matrix and Neo blocks. Currently in development.
+A Craft CMS plugin for performing batch actions on Matrix and Neo blocks. All at once, blocks can be expanded, collapsed, enabled, disabled, or deleted, using buttons placed at the top of your Matrix and Neo fields.
+
+## Usage Examples
+
+The action buttons will be enabled/disabled depending on the state of the selected blocks:
+
+<img src="docs/assets/screenshot1.png" width="764">
+
+Select all checked:
+
+<img src="docs/assets/screenshot2.png" width="765">
+
+After using the collapse action:
+
+<img src="docs/assets/screenshot3.png" width="766">
+
+If select all is checked and a new block is added, the new block will be selected:
+
+<img src="docs/assets/screenshot4.png" width="766">
+
+## Installation
+
+This plugin can be installed from the [Craft Plugin Store](https://plugins.craftcms.com/) or with [Composer](https://packagist.org/).
+
+### Craft Plugin Store
+
+Open your Craft project's control panel, navigate to the Plugin Store, search for Batch Actions and click Install.
+
+### Composer
+
+Open your terminal, navigate to your Craft project's root directory and run the following command:
+
+```
+composer require spicyweb/craft-batch-actions
+```
+
+Then open your project's control panel, navigate to Settings &rarr; Plugins, find Batch Actions and click Install.
+
+## Requirements
+
+Batch Actions 1.x requires Craft CMS 4.2.0 or any later Craft CMS 4 release.
+
+Neo support requires Neo 3.3.4 or any later Neo 3 release.
 
 ---
 
