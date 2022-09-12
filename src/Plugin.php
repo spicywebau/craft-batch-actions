@@ -31,7 +31,7 @@ class Plugin extends BasePlugin
             Event::on(
                 ElementsController::class,
                 ElementsController::EVENT_DEFINE_EDITOR_CONTENT,
-                function (DefineElementEditorHtmlEvent $e) {
+                function(DefineElementEditorHtmlEvent $e) {
                     Craft::$app->getView()->registerAssetBundle(BatchActionsAsset::class);
                 }
             );
