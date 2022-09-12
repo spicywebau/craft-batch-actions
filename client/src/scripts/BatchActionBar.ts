@@ -122,11 +122,11 @@ abstract class BatchActionBar {
    */
   protected supportedActions (): Array<[string, string, Function]> {
     return [
-      ['Expand', 'expand', this.isBlockCollapsed.bind(this)],
-      ['Collapse', 'collapse', this.isBlockExpanded.bind(this)],
-      ['Enable', 'enabled', this.isBlockDisabled.bind(this)],
-      ['Disable', 'disabled', this.isBlockEnabled.bind(this)],
-      ['Delete', 'remove', (_: JQuery) => true]
+      [Craft.t('batch-actions', 'Expand'), 'expand', this.isBlockCollapsed.bind(this)],
+      [Craft.t('batch-actions', 'Collapse'), 'collapse', this.isBlockExpanded.bind(this)],
+      [Craft.t('batch-actions', 'Enable'), 'enabled', this.isBlockDisabled.bind(this)],
+      [Craft.t('batch-actions', 'Disable'), 'disabled', this.isBlockEnabled.bind(this)],
+      [Craft.t('batch-actions', 'Delete'), 'remove', (_: JQuery) => true]
     ]
   }
 
@@ -175,7 +175,7 @@ abstract class BatchActionBar {
       class: 'batch-action-bar_select',
       role: 'checkbox',
       tabindex: 0,
-      'aria-label': 'Select all',
+      'aria-label': Craft.t('batch-actions', 'Select all'),
       'aria-checked': 'false'
     }).appendTo(this.$bar)
     this.$select = $('<div class="checkbox">').appendTo(this.$selectContainer)
@@ -452,7 +452,7 @@ class MatrixBatchActionBar extends BatchActionBar {
    * @inheritDoc
    */
   protected delete (): void {
-    if (window.confirm('Are you sure you want to delete the selected blocks?')) {
+    if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
       this.getSelectedBlocks().forEach((block) => block.selfDestruct())
     }
   }
@@ -524,7 +524,7 @@ class NeoBatchActionBar extends BatchActionBar {
    * @inheritDoc
    */
   protected delete (): void {
-    if (window.confirm('Are you sure you want to delete the selected blocks?')) {
+    if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
       this.getSelectedBlocks().forEach((block) => this.input.removeBlock(block))
     }
   }

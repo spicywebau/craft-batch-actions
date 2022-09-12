@@ -38,7 +38,7 @@
     }
   },
   "extra": {
-    "handle": "batchactions",
+    "handle": "batch-actions",
     "name": "Batch Actions",
     "class": "spicyweb\\batchactions\\Plugin",
     "changelogUrl": "https://github.com/spicywebau/craft-batch-actions/blob/1.x/CHANGELOG.md",
