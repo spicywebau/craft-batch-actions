@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 - 2022-09-15
 
 ### Fixed
 - Fixed a bug where translations weren't working
