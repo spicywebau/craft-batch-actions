@@ -8,14 +8,23 @@
     }
 
     &_select {
-        margin-right: 1px;
         padding: 9px;
         height: 34px;
         transform: translateY(2px);
         background-color: rgba(96, 125, 159, 0.25);
-        border-top-left-radius: var(--large-border-radius);
-        border-bottom-left-radius: var(--large-border-radius);
         cursor: pointer;
+
+        body.ltr & {
+            margin-right: 1px;
+            border-top-left-radius: var(--large-border-radius);
+            border-bottom-left-radius: var(--large-border-radius);
+        }
+
+        body.rtl & {
+            margin-left: 1px;
+            border-top-right-radius: var(--large-border-radius);
+            border-bottom-right-radius: var(--large-border-radius);
+        }
 
         &:hover {
             background-color: rgba(96, 125, 159, 0.3);
@@ -24,7 +33,14 @@
 
     &_buttons > .btn:first-child,
     &_menu > .btn {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
+        body.ltr & {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        body.rtl & {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
     }
 }
