@@ -33,4 +33,22 @@ class BatchActionsAsset extends AssetBundle
 
         parent::init();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function registerAssetFiles($view): void
+    {
+        $view->registerTranslations('batch-actions', [
+            'Are you sure you want to delete the selected blocks?',
+            'Collapse',
+            'Delete',
+            'Disable',
+            'Enable',
+            'Expand',
+            'Select all',
+        ]);
+
+        parent::registerAssetFiles($view);
+    }
 }

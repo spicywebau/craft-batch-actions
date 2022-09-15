@@ -122,11 +122,11 @@ abstract class BatchActionBar {
    */
   protected supportedActions (): Array<[string, string, Function]> {
     return [
-      [Craft.t('batch-actions', 'Expand'), 'expand', this.isBlockCollapsed.bind(this)],
-      [Craft.t('batch-actions', 'Collapse'), 'collapse', this.isBlockExpanded.bind(this)],
-      [Craft.t('batch-actions', 'Enable'), 'enabled', this.isBlockDisabled.bind(this)],
-      [Craft.t('batch-actions', 'Disable'), 'disabled', this.isBlockEnabled.bind(this)],
-      [Craft.t('batch-actions', 'Delete'), 'remove', (_: JQuery) => true]
+      ['Expand', 'expand', this.isBlockCollapsed.bind(this)],
+      ['Collapse', 'collapse', this.isBlockExpanded.bind(this)],
+      ['Enable', 'enabled', this.isBlockDisabled.bind(this)],
+      ['Disable', 'disabled', this.isBlockEnabled.bind(this)],
+      ['Delete', 'remove', (_: JQuery) => true]
     ]
   }
 
@@ -331,7 +331,7 @@ abstract class BatchActionBar {
         'data-bba-bn': `button.${lowerCaseLabel}`,
         'data-icon': icon
       })
-      .text(label)
+      .text(Craft.t('batch-actions', label))
 
     if (isButton) {
       $action.addClass(buttonClasses)
