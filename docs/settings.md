@@ -8,7 +8,7 @@ This setting allows for specifying handles of Matrix or Neo fields that should n
 
 ## Example
 
-Adding the following to your Craft project's `config/batch-actions.php` file will prevent a Matrix or Neo field with the handle `pageContent` from being gaven a batch actions bar:
+Adding the following to your Craft project's `config/batch-actions.php` file will prevent a Matrix or Neo field with the handle `pageContent` from being given a batch actions bar:
 
 ```php
 <?php
