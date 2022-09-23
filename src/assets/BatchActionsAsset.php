@@ -13,7 +13,9 @@ if (false) {
      * @since 1.0.0
      * @deprecated in 1.1.0 - use \spicyweb\batchactions\assets\bars\BarsAsset instead
      */
-    class BatchActionsAsset {}
+    class BatchActionsAsset
+    {
+    }
 }
 
 class_exists(BarsAsset::class);
