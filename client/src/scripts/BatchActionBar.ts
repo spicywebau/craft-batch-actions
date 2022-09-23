@@ -530,4 +530,4 @@ class NeoBatchActionBar extends BatchActionBar {
   }
 }
 
-export { MatrixBatchActionBar, NeoBatchActionBar }
+export { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar }

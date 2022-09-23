@@ -3,10 +3,13 @@
 namespace spicyweb\batchactions;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\controllers\ElementsController;
 use craft\events\DefineElementEditorHtmlEvent;
+use craft\helpers\Json;
 use spicyweb\batchactions\assets\bars\BarsAsset;
+use spicyweb\batchactions\models\Settings;
 use yii\base\Event;
 
 /**
@@ -24,7 +27,22 @@ class Plugin extends BasePlugin
     public function init(): void
     {
         parent::init();
+        $this->_initBarsAsset();
+    }
 
+    /**
+     * @inheritdoc
+     */
+    protected function createSettingsModel(): ?Model
+    {
+        return new Settings();
+    }
+
+    /**
+     * Listens for the `ElementsController::EVENT_DEFINE_EDITOR_CONTENT` event, to initialise batch action bars.
+     */
+    private function _initBarsAsset(): void
+    {
         $request = Craft::$app->getRequest();
 
         if ($request->getIsCpRequest() && !$request->getIsAjax()) {
@@ -32,7 +50,10 @@ class Plugin extends BasePlugin
                 ElementsController::class,
                 ElementsController::EVENT_DEFINE_EDITOR_CONTENT,
                 function(DefineElementEditorHtmlEvent $e) {
-                    Craft::$app->getView()->registerAssetBundle(BarsAsset::class);
+                    $settings = Json::encode($this->getSettings()->toArray());
+                    $view = Craft::$app->getView();
+                    $view->registerAssetBundle(BarsAsset::class);
+                    $view->registerJs("BatchActions.initBars($settings)");
                 }
             );
         }
