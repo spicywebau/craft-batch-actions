@@ -476,6 +476,15 @@ class NeoBatchActionBar extends BatchActionBar {
   /**
    * @inheritDoc
    */
+  protected supportedActions (): Array<[string, string, Function]> {
+    return super.supportedActions().concat([
+      ['Copy', 'field', () => this.getSelectedBlocks().length > 0]
+    ])
+  }
+
+  /**
+   * @inheritDoc
+   */
   protected registerEventListeners (): void {
     const blockEventListener: (block: NeoInputBlock) => void = (block) => {
       block.on('toggleExpansion toggleEnabled', () => this.refreshButtons())
@@ -526,6 +535,14 @@ class NeoBatchActionBar extends BatchActionBar {
   protected delete (): void {
     if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
       this.getSelectedBlocks().forEach((block) => this.input.removeBlock(block))
+    }
+  }
+
+  protected copy (): void {
+    const selectedBlocks = this.getSelectedBlocks()
+
+    if (selectedBlocks.length > 0) {
+      this.input['@copyBlock']({ block: selectedBlocks[0] })
     }
   }
 }

@@ -15,6 +15,7 @@ interface NeoInputField extends InputField {
   getBlocks: () => NeoInputBlock[]
   getName: () => string
   removeBlock: (block: NeoInputBlock) => void
+  '@copyBlock': (e: { block: NeoInputBlock }) => void
 }
 
 /**
