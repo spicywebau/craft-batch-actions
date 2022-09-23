@@ -2,53 +2,18 @@
 
 namespace spicyweb\batchactions\assets;
 
-use craft\web\AssetBundle;
-use craft\web\assets\cp\CpAsset;
+use spicyweb\batchactions\assets\bars\BarsAsset;
 
-/**
- * Class BatchActionsAsset
- *
- * @package spicyweb\batchactions\assets
- * @author Spicy Web <plugins@spicyweb.com.au>
- * @since 1.0.0
- */
-class BatchActionsAsset extends AssetBundle
-{
+if (false) {
     /**
-     * @inheritdoc
+     * Class BatchActionsAsset
+     *
+     * @package spicyweb\batchactions\assets
+     * @author Spicy Web <plugins@spicyweb.com.au>
+     * @since 1.0.0
+     * @deprecated in 1.1.0 - use \spicyweb\batchactions\assets\bars\BarsAsset instead
      */
-    public function init(): void
-    {
-        $this->sourcePath = '@spicyweb/batchactions/resources';
-
-        $this->depends = [
-            CpAsset::class,
-        ];
-        $this->css = [
-            'css/main.css',
-        ];
-        $this->js = [
-            'js/main.js',
-        ];
-
-        parent::init();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function registerAssetFiles($view): void
-    {
-        $view->registerTranslations('batch-actions', [
-            'Are you sure you want to delete the selected blocks?',
-            'Collapse',
-            'Delete',
-            'Disable',
-            'Enable',
-            'Expand',
-            'Select all',
-        ]);
-
-        parent::registerAssetFiles($view);
-    }
+    class BatchActionsAsset {}
 }
+
+class_exists(BarsAsset::class);

@@ -6,7 +6,7 @@ use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\controllers\ElementsController;
 use craft\events\DefineElementEditorHtmlEvent;
-use spicyweb\batchactions\assets\BatchActionsAsset;
+use spicyweb\batchactions\assets\bars\BarsAsset;
 use yii\base\Event;
 
 /**
@@ -32,7 +32,7 @@ class Plugin extends BasePlugin
                 ElementsController::class,
                 ElementsController::EVENT_DEFINE_EDITOR_CONTENT,
                 function(DefineElementEditorHtmlEvent $e) {
-                    Craft::$app->getView()->registerAssetBundle(BatchActionsAsset::class);
+                    Craft::$app->getView()->registerAssetBundle(BarsAsset::class);
                 }
             );
         }

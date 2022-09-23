@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `spicyweb\batchactions\assets\bars\BarsAsset`
+
+### Deprecated
+- Deprecated `spicyweb\batchactions\assets\BatchActionsAsset`; replaced with `spicyweb\batchactions\assets\bars\BarsAsset`
+
 ## 1.0.1 - 2022-09-15
 
 ### Fixed
