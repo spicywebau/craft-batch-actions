@@ -13,9 +13,19 @@ interface InputField extends GarnishComponent {
  */
 interface NeoInputField extends InputField {
   getBlocks: () => NeoInputBlock[]
+  getBlockTypes: (topLevelOnly: boolean) => NeoBlockType[]
+  getCopiedBlocks: () => Array<{
+    level: number
+    type: number
+  }>
   getName: () => string
   removeBlock: (block: NeoInputBlock) => void
   '@copyBlock': (e: { block: NeoInputBlock }) => void
+  '@pasteBlock': (e: { block?: NeoInputBlock }) => void
+}
+
+interface NeoBlockType {
+  getId: () => number
 }
 
 /**

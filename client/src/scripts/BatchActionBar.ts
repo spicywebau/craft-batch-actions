@@ -28,8 +28,33 @@ interface MenuButton extends JQuery {
  */
 interface ButtonRefreshData {
   icon: string
-  check: Function
+  condition: Function
   enable: boolean
+  initialState: boolean
+}
+
+/**
+ * Represents a batch action.
+ */
+interface BatchAction {
+  label: string
+  icon: string
+  condition: (data: any) => boolean
+  initialState: boolean
+}
+
+const createAction: (
+  label: string,
+  icon: string,
+  condition: (data: any) => boolean,
+  initialState?: boolean
+) => BatchAction = (label, icon, condition, initialState = false) => {
+  return {
+    label,
+    icon,
+    condition,
+    initialState
+  }
 }
 
 /**
@@ -96,8 +121,8 @@ abstract class BatchActionBar {
     const $actions = this.$bar.add(this.$menu)
 
     // Register event handlers for each action button
-    this.supportedActions().forEach(([label, _icon, _check]) => {
-      const lowerCaseLabel = label.toLowerCase()
+    this.actions().forEach((action) => {
+      const lowerCaseLabel = action.label.toLowerCase()
       this._$buttons[lowerCaseLabel] = $actions.find(`[data-bba-bn="button.${lowerCaseLabel}"]`)
       this._$buttons[lowerCaseLabel].on('activate', (e: JQuery.Event) => {
         e.preventDefault()
@@ -116,18 +141,32 @@ abstract class BatchActionBar {
 
   /**
    * Gets the supported batch actions for the block element input field.
+   * @returns an array of `BatchAction`s.
+   * @protected
+   * @since 1.2.0
+   */
+  protected actions (): BatchAction[] {
+    const actions = [
+      createAction('Expand', 'expand', this.isBlockCollapsed.bind(this)),
+      createAction('Collapse', 'collapse', this.isBlockExpanded.bind(this)),
+      createAction('Enable', 'enabled', this.isBlockDisabled.bind(this)),
+      createAction('Disable', 'disabled', this.isBlockEnabled.bind(this)),
+      createAction('Delete', 'remove', (_?: any) => this.getSelectedBlocks().length > 0)
+    ]
+
+    return actions
+  }
+
+  /**
+   * Gets the supported batch actions for the block element input field.
    * @returns an array of tuples containing the label, icon name, and function to check whether the
    * action should be enabled.
    * @protected
+   * @deprecated in 1.2.0; use `actions()` instead
    */
   protected supportedActions (): Array<[string, string, Function]> {
-    return [
-      ['Expand', 'expand', this.isBlockCollapsed.bind(this)],
-      ['Collapse', 'collapse', this.isBlockExpanded.bind(this)],
-      ['Enable', 'enabled', this.isBlockDisabled.bind(this)],
-      ['Disable', 'disabled', this.isBlockEnabled.bind(this)],
-      ['Delete', 'remove', (_: JQuery) => true]
-    ]
+    return this.actions()
+      .map((action) => [action.label, action.icon, action.condition])
   }
 
   /**
@@ -136,7 +175,7 @@ abstract class BatchActionBar {
    * @returns whether `$block` is expanded.
    * @protected
    */
-  protected abstract isBlockExpanded ($block: JQuery): boolean
+  protected abstract isBlockExpanded ($block?: JQuery): boolean
 
   /**
    * Checks whether a block is collapsed.
@@ -144,8 +183,8 @@ abstract class BatchActionBar {
    * @returns whether `$block` is collapsed.
    * @protected
    */
-  protected isBlockCollapsed ($block: JQuery): boolean {
-    return !this.isBlockExpanded($block)
+  protected isBlockCollapsed ($block?: JQuery): boolean {
+    return typeof $block !== 'undefined' ? !this.isBlockExpanded($block) : false
   }
 
   /**
@@ -154,7 +193,7 @@ abstract class BatchActionBar {
    * @returns whether `$block` is enabled.
    * @protected
    */
-  protected abstract isBlockEnabled ($block: JQuery): boolean
+  protected abstract isBlockEnabled ($block?: JQuery): boolean
 
   /**
    * Checks whether a block is disabled.
@@ -162,8 +201,8 @@ abstract class BatchActionBar {
    * @returns whether `$block` is disabled.
    * @protected
    */
-  protected isBlockDisabled ($block: JQuery): boolean {
-    return !this.isBlockEnabled($block)
+  protected isBlockDisabled ($block?: JQuery): boolean {
+    return typeof $block !== 'undefined' ? !this.isBlockEnabled($block) : false
   }
 
   /**
@@ -249,20 +288,29 @@ abstract class BatchActionBar {
     const actions: Record<string, ButtonRefreshData> = {}
     const labels: string[] = []
 
-    this.supportedActions().forEach(([label, icon, check]) => {
-      labels.push(label)
-      actions[label] = {
-        icon,
-        check,
-        enable: false
+    this.actions().forEach((action) => {
+      labels.push(action.label)
+      actions[action.label] = {
+        icon: action.icon,
+        condition: action.condition,
+        enable: action.initialState,
+        initialState: action.initialState
       }
     })
 
-    this.input.blockSelect.$selectedItems.each((_: number, block: HTMLElement) => {
-      const $block = $(block)
+    const checkConditions: (data?: any) => void = (data?: any) => {
       labels.forEach((label) => {
-        actions[label].enable ||= actions[label].check($block)
+        if (actions[label].initialState) {
+          actions[label].enable &&= actions[label].condition(data)
+        } else {
+          actions[label].enable ||= actions[label].condition(data)
+        }
       })
+    }
+
+    checkConditions()
+    this.input.blockSelect.$selectedItems.each((_: number, block: HTMLElement) => {
+      checkConditions($(block))
     })
 
     labels.forEach((label) => {
@@ -282,8 +330,9 @@ abstract class BatchActionBar {
    */
   private _initButtons (): void {
     this.$buttonsContainer = $('<div class="batch-action-bar_buttons btngroup"/>').appendTo(this.$bar)
-    this.supportedActions()
-      .forEach(([label, icon, _]) => this._generateAction(label, icon, 'btn').appendTo(this.$buttonsContainer))
+    this.actions().forEach((action) => {
+      this._generateAction(action.label, action.icon, 'btn').appendTo(this.$buttonsContainer)
+    })
   }
 
   /**
@@ -299,8 +348,9 @@ abstract class BatchActionBar {
     const $ul = $('<ul class="padded"/>')
       .appendTo(this.$menu)
 
-    this.supportedActions()
-      .forEach(([label, icon]) => $('<li/>').append(this._generateAction(label, icon)).appendTo($ul))
+    this.actions().forEach((action) => {
+      $('<li/>').append(this._generateAction(action.label, action.icon)).appendTo($ul)
+    })
 
     $button.menubtn()
     const selectWidth = (this.$selectContainer.outerWidth() as number) + 2
@@ -414,15 +464,15 @@ class MatrixBatchActionBar extends BatchActionBar {
   /**
    * @inheritDoc
    */
-  protected isBlockExpanded ($block: JQuery): boolean {
-    return !$block.hasClass('collapsed')
+  protected isBlockExpanded ($block?: JQuery): boolean {
+    return typeof $block !== 'undefined' ? !$block.hasClass('collapsed') : false
   }
 
   /**
    * @inheritDoc
    */
-  protected isBlockEnabled ($block: JQuery): boolean {
-    return !$block.hasClass('disabled')
+  protected isBlockEnabled ($block?: JQuery): boolean {
+    return typeof $block !== 'undefined' ? !$block.hasClass('disabled') : false
   }
 
   /**
@@ -476,9 +526,30 @@ class NeoBatchActionBar extends BatchActionBar {
   /**
    * @inheritDoc
    */
-  protected supportedActions (): Array<[string, string, Function]> {
-    return super.supportedActions().concat([
-      ['Copy', 'field', () => this.getSelectedBlocks().length > 0]
+  protected actions (): BatchAction[] {
+    if (typeof this.input.getCopiedBlocks === 'undefined') {
+      // Not using Neo 3.4.0+, can't support copying/pasting
+      return super.actions()
+    }
+
+    const pasteCondition: (_?: any) => boolean = (_?) => {
+      const copiedBlocks = this.input.getCopiedBlocks()
+
+      if (copiedBlocks.length === 0) {
+        return false
+      }
+
+      const baseLevel = copiedBlocks[0].level
+      const topLevelBlockTypeIds = this.input.getBlockTypes(true).map((bt) => bt.getId())
+
+      return copiedBlocks
+        .filter((block) => block.level === baseLevel && topLevelBlockTypeIds.includes(block.type))
+        .length > 0
+    }
+
+    return super.actions().concat([
+      createAction('Copy', 'field', (_?: any) => this.getSelectedBlocks().length > 0),
+      createAction('Paste', 'brush', pasteCondition, true)
     ])
   }
 
@@ -487,7 +558,7 @@ class NeoBatchActionBar extends BatchActionBar {
    */
   protected registerEventListeners (): void {
     const blockEventListener: (block: NeoInputBlock) => void = (block) => {
-      block.on('toggleExpansion toggleEnabled', () => this.refreshButtons())
+      block.on('copyBlock toggleExpansion toggleEnabled', () => this.refreshButtons())
     }
     this.input.getBlocks().forEach(blockEventListener)
     this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => blockEventListener(e.block))
@@ -497,15 +568,22 @@ class NeoBatchActionBar extends BatchActionBar {
   /**
    * @inheritDoc
    */
-  protected isBlockExpanded ($block: JQuery): boolean {
-    return $block.hasClass('is-expanded')
+  protected isBlockExpanded ($block?: JQuery): boolean {
+    return $block?.hasClass('is-expanded') ?? false
   }
 
   /**
    * @inheritDoc
    */
-  protected isBlockEnabled ($block: JQuery): boolean {
-    return $block.hasClass('is-enabled')
+  protected isBlockCollapsed ($block?: JQuery): boolean {
+    return typeof $block !== 'undefined' ? !this.isBlockExpanded($block) : false
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected isBlockEnabled ($block?: JQuery): boolean {
+    return $block?.hasClass('is-enabled') ?? false
   }
 
   /**
@@ -544,6 +622,10 @@ class NeoBatchActionBar extends BatchActionBar {
     if (selectedBlocks.length > 0) {
       this.input['@copyBlock']({ block: selectedBlocks[0] })
     }
+  }
+
+  protected paste (): void {
+    this.input['@pasteBlock']({})
   }
 }
 

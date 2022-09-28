@@ -43,10 +43,12 @@ class BarsAsset extends AssetBundle
         $view->registerTranslations('batch-actions', [
             'Are you sure you want to delete the selected blocks?',
             'Collapse',
+            'Copy',
             'Delete',
             'Disable',
             'Enable',
             'Expand',
+            'Paste',
             'Select all',
         ]);
 
