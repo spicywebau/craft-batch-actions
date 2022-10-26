@@ -26,10 +26,10 @@ class BarsAsset extends AssetBundle
             CpAsset::class,
         ];
         $this->css = [
-            'css/bars.css',
+            'styles/bars.css',
         ];
         $this->js = [
-            'js/bars.js',
+            'scripts/bars.js',
         ];
 
         parent::init();

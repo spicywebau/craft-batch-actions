@@ -3,11 +3,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   entry: {
-    bars: path.resolve(__dirname, 'src/scripts/main.ts')
+    bars: path.resolve(__dirname, 'src/assets/bars/src/scripts/main.ts')
   },
   output: {
-    path: path.resolve(__dirname, '../src/assets'),
-    filename: '[name]/dist/js/[name].js'
+    path: path.resolve(__dirname, 'src/assets'),
+    filename: '[name]/dist/scripts/[name].js'
   },
   externals: {
     jquery: 'jQuery',
@@ -41,6 +41,6 @@ module.exports = {
   },
   devtool: 'source-map',
   plugins: [new MiniCssExtractPlugin({
-    filename: '[name]/dist/css/[name].css'
+    filename: '[name]/dist/styles/[name].css'
   })]
 }

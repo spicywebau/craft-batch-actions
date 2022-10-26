@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "strictNullChecks": true
+  },
+  "files": [
+    "src/assets/bars/src/scripts/BatchActionBar.ts",
+    "src/assets/bars/src/scripts/main.ts",
+    "src/assets/bars/src/scripts/types/Craft.d.ts",
+    "src/assets/bars/src/scripts/types/Garnish.d.ts",
+    "src/assets/bars/src/scripts/types/Neo.d.ts",
+    "src/assets/bars/src/scripts/types/InputBlock.ts",
+    "src/assets/bars/src/scripts/types/InputField.ts"
+  ]
+}
