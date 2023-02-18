@@ -63,7 +63,8 @@ if (typeof Neo !== 'undefined' && typeof Neo.Input !== 'undefined') {
   Garnish.on(Neo.Input, 'afterInit', (e: NeoAfterInitEvent) => {
     // Neo's block select was private prior to Neo 3.3.4
     // TODO: remove this check on Craft 5
-    if (typeof e.target.blockSelect !== 'undefined') {
+    // Also, the bar shouldn't be initialised when viewing a revision
+    if (typeof e.target.blockSelect !== 'undefined' && !e.target.$container.hasClass('is-static')) {
       const fieldHandle = e.target.getName()
       const initBarFunction: () => void = () => {
         if (!barsSettings.barsDisallowedFields.includes(fieldHandle)) {
