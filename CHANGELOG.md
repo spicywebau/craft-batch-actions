@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added the ability to batch-copy Neo blocks, and paste them at the top of the field
+- Added the ability to batch-copy Matrix blocks, and paste them at the top of the field, if Smith is installed
 
 ## 1.1.0 - 2022-09-23
 

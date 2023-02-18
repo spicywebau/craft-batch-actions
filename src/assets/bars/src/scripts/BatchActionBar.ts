@@ -1,5 +1,5 @@
 import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
-import { InputField, NeoInputField } from './types/InputField'
+import { InputField, MatrixInputField, NeoInputField } from './types/InputField'
 
 /**
  * Settings for a `BatchActionBar`.
@@ -31,6 +31,13 @@ interface ButtonRefreshData {
   condition: Function
   enable: boolean
   initialState: boolean
+}
+
+interface SmithMenu {
+  $pasteBtn: JQuery
+  checkPaste: () => void
+  copyBlock: (e?: object) => void
+  pasteBlock: (e?: object, data?: object) => void
 }
 
 /**
@@ -436,14 +443,59 @@ abstract class BatchActionBar {
  */
 class MatrixBatchActionBar extends BatchActionBar {
   /**
+   * The Smith menu, if Smith is installed.
+   * @see https://plugins.craftcms.com/smith
+   * @private
+   */
+  private _smithMenu: SmithMenu|null = null
+
+  /**
+   * Dummy block so our Smith menu pastes blocks at the top
+   * @private
+   */
+  private _$dummyBlock: JQuery|null = null
+
+  /**
    * The constructor.
-   * @param input - The Matrix `InputField`.
+   * @param input - The `MatrixInputField`.
    * @public
    */
-  constructor (public readonly input: InputField) {
+  constructor (public readonly input: MatrixInputField) {
     super(input, {
       addBlockEvent: 'blockAdded'
     })
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected actions (): BatchAction[] {
+    if (typeof Craft.Smith === 'undefined') {
+      // Not using Smith, can't support copying/pasting
+      return super.actions()
+    } else if (this._smithMenu === null || typeof this._smithMenu === 'undefined') {
+      this._$dummyBlock = $('<div/>', {
+        class: 'hidden',
+        data: {
+          block: {
+            $actionMenu: $()
+          }
+        }
+      }).prependTo(this.input.$blockContainer)
+      this._smithMenu = new Craft.Smith.Menu(
+        this.input.$container,
+        this._$dummyBlock,
+        $() // Supposed to be all Matrix blocks for the field, but doesn't appear to actually be used by Smith
+      )
+    }
+
+    return super.actions().concat([
+      createAction('Copy', 'field', (_?: any) => this.getSelectedBlocks().length > 0),
+      createAction('Paste', 'brush', (_?: any) => {
+        this._smithMenu?.checkPaste()
+        return !(this._smithMenu?.$pasteBtn.hasClass('disabled') ?? true)
+      }, true)
+    ])
   }
 
   /**
@@ -504,6 +556,26 @@ class MatrixBatchActionBar extends BatchActionBar {
   protected delete (): void {
     if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
       this.getSelectedBlocks().forEach((block) => block.selfDestruct())
+    }
+  }
+
+  protected copy (): void {
+    this._ensureSmithInstalled('copy')
+    const selectedBlocks = this.getSelectedBlocks()
+
+    if (selectedBlocks.length > 0) {
+      this._smithMenu?.copyBlock()
+    }
+  }
+
+  protected paste (): void {
+    this._ensureSmithInstalled('paste')
+    this._smithMenu?.pasteBlock()
+  }
+
+  private _ensureSmithInstalled (action: string): void {
+    if (typeof Craft.Smith === 'undefined') {
+      throw new Error(`Tried to ${action} Matrix blocks but Smith isn't installed.`)
     }
   }
 }

@@ -1,5 +1,5 @@
 import { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar } from './BatchActionBar'
-import { InputField, NeoInputField } from './types/InputField'
+import { MatrixInputField, NeoInputField } from './types/InputField'
 import '../styles/main.scss'
 
 declare global {
@@ -16,7 +16,7 @@ interface Settings {
 }
 
 interface MatrixAfterInitEvent {
-  target: InputField
+  target: MatrixInputField
 }
 
 interface NeoAfterInitEvent {

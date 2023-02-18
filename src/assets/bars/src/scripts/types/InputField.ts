@@ -9,6 +9,13 @@ interface InputField extends GarnishComponent {
 }
 
 /**
+ * A Matrix input field.
+ */
+interface MatrixInputField extends InputField {
+  $blockContainer: JQuery
+}
+
+/**
  * A Neo input field.
  */
 interface NeoInputField extends InputField {
@@ -42,4 +49,4 @@ interface InputBlockSelect extends GarnishComponent {
   }
 }
 
-export { InputField, NeoInputField }
+export { InputField, MatrixInputField, NeoInputField }
