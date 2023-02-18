@@ -4,6 +4,8 @@
 
 A Craft CMS plugin for performing batch actions on Matrix and Neo blocks. All at once, blocks can be expanded, collapsed, enabled, disabled, or deleted, using buttons placed at the top of your Matrix and Neo fields.
 
+From version 1.2.0, Batch Actions supports batch copying Matrix and Neo blocks, and pasting them at the top of the field! Matrix support requires [Smith](https://github.com/verbb/smith) to be installed, while Neo support requires Neo 3.4.0 or later.
+
 ## Usage Examples
 
 The action buttons will be enabled/disabled depending on the state of the selected blocks:
@@ -45,6 +47,10 @@ Then open your project's control panel, navigate to Settings &rarr; Plugins, fin
 Batch Actions 1.x requires Craft CMS 4.2.0 or any later Craft CMS 4 release.
 
 Neo support requires Neo 3.3.4 or any later Neo 3 release.
+
+Batch copying and pasting Neo blocks requires Neo 3.4.0 or any later Neo 3 release.
+
+Batch copying and pasting Matrix blocks requires [Smith](https://github.com/verbb/smith) to be installed.
 
 ---
 
