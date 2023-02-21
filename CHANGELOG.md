@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Added French translations (thanks @scandella)
+
 ### Fixed
 - Fixed a bug where, when loading an element editor page with a window size where batch actions bar buttons would exceed the content container width, the bar would sometimes still show the buttons instead of the menu
 
