@@ -362,12 +362,14 @@ abstract class BatchActionBar {
     $button.menubtn()
     const selectWidth = (this.$selectContainer.outerWidth() as number) + 2
     let buttonsWidth = this.$buttonsContainer.width() as number
-    this.$bar.on('resize', () => {
+    const updateResponsiveness: () => void = () => {
       buttonsWidth ||= this.$buttonsContainer.width() as number
       const isMobile = (this.$bar.width() as number) - selectWidth < buttonsWidth
       this.$buttonsContainer.toggleClass('hidden', isMobile)
       this.$menuContainer.toggleClass('hidden', !isMobile)
-    })
+    }
+    updateResponsiveness()
+    this.$bar.on('resize', updateResponsiveness)
   }
 
   /**
