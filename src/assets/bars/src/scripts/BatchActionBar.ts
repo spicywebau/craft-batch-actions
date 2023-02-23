@@ -613,12 +613,38 @@ class NeoBatchActionBar extends BatchActionBar {
         return false
       }
 
+      // Ensure there are valid blocks to paste at the top level
       const baseLevel = copiedBlocks[0].level
       const topLevelBlockTypeIds = this.input.getBlockTypes(true).map((bt) => bt.getId())
-
-      return copiedBlocks
+      const validTopLevelBlockCount = copiedBlocks
         .filter((block) => block.level === baseLevel && topLevelBlockTypeIds.includes(block.type))
-        .length > 0
+        .length
+      if (validTopLevelBlockCount === 0) {
+        return false
+      }
+
+      // Ensure we won't exceed the field's max top level blocks setting
+      const fieldMaxTopBlocks = this.input.getMaxTopBlocks()
+      if (
+        fieldMaxTopBlocks !== null &&
+        fieldMaxTopBlocks > 0 &&
+        validTopLevelBlockCount + this.input.getBlocks(1).length > fieldMaxTopBlocks
+      ) {
+        return false
+      }
+
+      // Ensure we won't exceed the field's max blocks setting
+      const fieldMaxBlocks = this.input.getMaxBlocks()
+      if (
+        fieldMaxBlocks !== null &&
+        fieldMaxBlocks > 0 &&
+        copiedBlocks.length + this.input.getBlocks().length > fieldMaxBlocks
+      ) {
+        return false
+      }
+
+      // Now we should be fine
+      return true
     }
 
     return super.actions().concat([
@@ -635,7 +661,10 @@ class NeoBatchActionBar extends BatchActionBar {
       block.on('copyBlock toggleExpansion toggleEnabled', () => this.refreshButtons())
     }
     this.input.getBlocks().forEach(blockEventListener)
-    this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => blockEventListener(e.block))
+    this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
+      this.refreshButtons()
+      blockEventListener(e.block)
+    })
     this.input.on('removeBlock', () => this.refreshButtons())
   }
 

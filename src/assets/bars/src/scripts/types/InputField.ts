@@ -19,13 +19,15 @@ interface MatrixInputField extends InputField {
  * A Neo input field.
  */
 interface NeoInputField extends InputField {
-  getBlocks: () => NeoInputBlock[]
+  getBlocks: (level?: number) => NeoInputBlock[]
   getBlockTypes: (topLevelOnly: boolean) => NeoBlockType[]
   getCopiedBlocks: () => Array<{
     level: number
     type: number
   }>
   getName: () => string
+  getMaxBlocks: () => number|null
+  getMaxTopBlocks: () => number|null
   removeBlock: (block: NeoInputBlock) => void
   '@copyBlock': (e: { block: NeoInputBlock }) => void
   '@pasteBlock': (e: { block?: NeoInputBlock }) => void
