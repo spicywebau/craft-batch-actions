@@ -1,7 +1,7 @@
 {
   "name": "spicyweb/craft-batch-actions",
   "description": "A Craft CMS plugin for performing batch actions on Matrix and Neo blocks",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "craft-plugin",
   "keywords": [
     "cms",
@@ -22,7 +22,7 @@
   "support": {
     "issues": "https://github.com/spicywebau/craft-batch-actions/issues",
     "source": "https://github.com/spicywebau/craft-batch-actions",
-    "docs": "https://github.com/spicywebau/craft-batch-actions/blob/1.2.1/README.md",
+    "docs": "https://github.com/spicywebau/craft-batch-actions/blob/1.2.2/README.md",
     "rss": "https://github.com/spicywebau/craft-batch-actions/commits/1.x.atom"
   },
   "require": {
@@ -43,7 +43,7 @@
     "name": "Batch Actions",
     "class": "spicyweb\\batchactions\\Plugin",
     "changelogUrl": "https://github.com/spicywebau/craft-batch-actions/blob/1.x/CHANGELOG.md",
-    "downloadUrl": "https://github.com/spicywebau/craft-batch-actions/archive/refs/tags/1.2.1.zip"
+    "downloadUrl": "https://github.com/spicywebau/craft-batch-actions/archive/refs/tags/1.2.2.zip"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
