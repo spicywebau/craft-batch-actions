@@ -25,4 +25,15 @@ interface NeoInputBlock extends InputBlock {
   isSelected: () => boolean
 }
 
-export { InputBlock, MatrixInputBlock, NeoInputBlock }
+/**
+ * A Craft Commerce variant input block.
+ */
+interface VariantInputBlock extends InputBlock {
+}
+
+export {
+  InputBlock,
+  MatrixInputBlock,
+  NeoInputBlock,
+  VariantInputBlock
+}

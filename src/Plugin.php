@@ -5,9 +5,11 @@ namespace spicyweb\batchactions;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
-use craft\controllers\ElementsController;
-use craft\events\DefineElementEditorHtmlEvent;
+// use craft\controllers\ElementsController;
+// use craft\events\DefineElementEditorHtmlEvent;
+use craft\events\TemplateEvent;
 use craft\helpers\Json;
+use craft\web\View;
 use spicyweb\batchactions\assets\bars\BarsAsset;
 use spicyweb\batchactions\models\Settings;
 use yii\base\Event;
@@ -46,16 +48,12 @@ class Plugin extends BasePlugin
         $request = Craft::$app->getRequest();
 
         if ($request->getIsCpRequest() && !$request->getIsAjax()) {
-            Event::on(
-                ElementsController::class,
-                ElementsController::EVENT_DEFINE_EDITOR_CONTENT,
-                function(DefineElementEditorHtmlEvent $e) {
-                    $settings = Json::encode($this->getSettings()->toArray());
-                    $view = Craft::$app->getView();
-                    $view->registerAssetBundle(BarsAsset::class);
-                    $view->registerJs("BatchActions.initBars($settings)");
-                }
-            );
+            Event::on(View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE, function(TemplateEvent $event) {
+                $settings = Json::encode($this->getSettings()->toArray());
+                $view = Craft::$app->getView();
+                $view->registerAssetBundle(BarsAsset::class);
+                $view->registerJs("BatchActions.initBars($settings)");
+            });
         }
     }
 }

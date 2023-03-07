@@ -1,4 +1,4 @@
-import { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar } from './BatchActionBar'
+import { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar, VariantBatchActionBar } from './BatchActionBar'
 import { MatrixInputField, NeoInputField } from './types/InputField'
 import '../styles/main.scss'
 
@@ -79,4 +79,22 @@ if (typeof Neo !== 'undefined' && typeof Neo.Input !== 'undefined') {
       }
     }
   })
+}
+
+if (typeof Craft.Commerce !== 'undefined' && typeof Craft.Commerce.VariantMatrix !== 'undefined') {
+  const VariantMatrix = Craft.Commerce.VariantMatrix
+  const VariantMatrixInit = VariantMatrix.prototype.init
+  const initBarFunction: (variantMatrix: any) => void = (variantMatrix) => {
+    actionBars.push(new VariantBatchActionBar(variantMatrix))
+  }
+
+  VariantMatrix.prototype.init = function () {
+    VariantMatrixInit.apply(this, arguments)
+
+    if (barsInitialised) {
+      initBarFunction(this)
+    } else {
+      initBarFunctions.push(() => initBarFunction(this))
+    }
+  }
 }

@@ -1,11 +1,12 @@
-import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
-import { InputField, MatrixInputField, NeoInputField } from './types/InputField'
+import { InputBlock, MatrixInputBlock, NeoInputBlock, VariantInputBlock } from './types/InputBlock'
+import { InputField, MatrixInputField, NeoInputField, VariantInputField, InputBlockSelect } from './types/InputField'
 
 /**
  * Settings for a `BatchActionBar`.
  */
 interface BatchActionBarSettings {
   addBlockEvent: string
+  selector: InputBlockSelect
 }
 
 /**
@@ -237,8 +238,8 @@ abstract class BatchActionBar {
 
           if (this.$select.hasClass('checked')) {
             handlingCheckbox = true
-            $block.addClass(this.input.blockSelect.settings.selectedClass)
-            this.input.blockSelect.selectItem($block, false, true)
+            $block.addClass(this.settings.selector.settings.selectedClass)
+            this.settings.selector.selectItem($block, false, true)
             this.refreshButtons()
           }
         })
@@ -250,10 +251,10 @@ abstract class BatchActionBar {
       const selectAll = this.$select.hasClass('checked')
 
       if (selectAll) {
-        this.input.blockSelect.selectAll()
+        this.settings.selector.selectAll()
         this.$selectContainer.attr('aria-checked', 'true')
       } else {
-        this.input.blockSelect.deselectAll()
+        this.settings.selector.deselectAll()
         this.$selectContainer.attr('aria-checked', 'false')
       }
     }
@@ -270,12 +271,12 @@ abstract class BatchActionBar {
       }
     })
 
-    this.input.blockSelect.on('selectionChange', (_: Event) => {
+    this.settings.selector.on('selectionChange', (_: Event) => {
       if (!handlingCheckbox) {
         // Any manual change to block selection invalidates the select all state
         this.$select.removeClass('checked')
 
-        const anyBlocksChecked = this.input.blockSelect.$selectedItems.length > 0
+        const anyBlocksChecked = this.settings.selector.$selectedItems.length > 0
         this.$select.toggleClass('indeterminate', anyBlocksChecked)
         this.$selectContainer.attr('aria-checked', anyBlocksChecked ? 'mixed' : 'false')
       } else {
@@ -316,7 +317,7 @@ abstract class BatchActionBar {
     }
 
     checkConditions()
-    this.input.blockSelect.$selectedItems.each((_: number, block: HTMLElement) => {
+    this.settings.selector.$selectedItems.each((_: number, block: HTMLElement) => {
       checkConditions($(block))
     })
 
@@ -464,7 +465,8 @@ class MatrixBatchActionBar extends BatchActionBar {
    */
   constructor (public readonly input: MatrixInputField) {
     super(input, {
-      addBlockEvent: 'blockAdded'
+      addBlockEvent: 'blockAdded',
+      selector: input.blockSelect
     })
   }
 
@@ -593,7 +595,8 @@ class NeoBatchActionBar extends BatchActionBar {
    */
   constructor (public readonly input: NeoInputField) {
     super(input, {
-      addBlockEvent: 'addBlock'
+      addBlockEvent: 'addBlock',
+      selector: input.blockSelect
     })
   }
 
@@ -732,4 +735,69 @@ class NeoBatchActionBar extends BatchActionBar {
   }
 }
 
-export { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar }
+class VariantBatchActionBar extends BatchActionBar {
+  /**
+   * The constructor.
+   * @param input - The `MatrixInputField`.
+   * @public
+   */
+  constructor (public readonly input: VariantInputField) {
+    super(input, {
+      addBlockEvent: 'blockAdded',
+      selector: input.variantSelect
+    })
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected isBlockExpanded ($block?: JQuery): boolean {
+    return !($block?.hasClass('collapsed') ?? true)
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected isBlockEnabled ($block?: JQuery): boolean {
+    return !($block?.hasClass('disabled') ?? true)
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected getSelectedBlocks (): VariantInputBlock[] {
+    return this.settings.selector.$selectedItems
+      .map((_, block) => $(block).data('variant'))
+      .get()
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected enable (): void {
+    this.input.enableSelectedVariants()
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected disable (): void {
+    this.input.disableSelectedVariants()
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected delete (): void {
+    if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
+      this.input.deleteSelectedVariants()
+    }
+  }
+}
+
+export {
+  BatchActionBar,
+  MatrixBatchActionBar,
+  NeoBatchActionBar,
+  VariantBatchActionBar
+}

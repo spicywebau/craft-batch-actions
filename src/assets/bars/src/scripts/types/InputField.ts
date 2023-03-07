@@ -5,7 +5,6 @@ import { NeoInputBlock } from './InputBlock'
  */
 interface InputField extends GarnishComponent {
   $container: JQuery
-  blockSelect: InputBlockSelect
 }
 
 /**
@@ -13,6 +12,7 @@ interface InputField extends GarnishComponent {
  */
 interface MatrixInputField extends InputField {
   $blockContainer: JQuery
+  blockSelect: InputBlockSelect
 }
 
 /**
@@ -31,10 +31,22 @@ interface NeoInputField extends InputField {
   removeBlock: (block: NeoInputBlock) => void
   '@copyBlock': (e: { block: NeoInputBlock }) => void
   '@pasteBlock': (e: { block?: NeoInputBlock }) => void
+  blockSelect: InputBlockSelect
 }
 
 interface NeoBlockType {
   getId: () => number
+}
+
+/**
+ * A Craft Commerce variant input field.
+ */
+interface VariantInputField extends InputField {
+  enableSelectedVariants: () => void
+  disableSelectedVariants: () => void
+  deleteSelectedVariants: () => void
+  $variants: JQuery[]
+  variantSelect: InputBlockSelect
 }
 
 /**
@@ -51,4 +63,10 @@ interface InputBlockSelect extends GarnishComponent {
   }
 }
 
-export { InputField, MatrixInputField, NeoInputField }
+export {
+  InputField,
+  MatrixInputField,
+  NeoInputField,
+  VariantInputField,
+  InputBlockSelect
+}
