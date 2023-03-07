@@ -45,7 +45,8 @@ interface VariantInputField extends InputField {
   enableSelectedVariants: () => void
   disableSelectedVariants: () => void
   deleteSelectedVariants: () => void
-  $variants: JQuery[]
+  $variantContainer: JQuery
+  totalNewVariants: number
   variantSelect: InputBlockSelect
 }
 

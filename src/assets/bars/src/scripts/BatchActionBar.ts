@@ -234,7 +234,7 @@ abstract class BatchActionBar {
         // The add block event is only initialised on the first check of the select checkbox, since
         // if it isn't checked then any new block doesn't need to be checked
         this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
-          const $block = e.$block ?? e.block.$container
+          const $block = e.$block ?? e.block?.$container ?? this.getNewestBlock()?.$container
 
           if (this.$select.hasClass('checked')) {
             handlingCheckbox = true
@@ -405,6 +405,15 @@ abstract class BatchActionBar {
    * @protected
    */
   protected abstract getSelectedBlocks (): InputBlock[]
+
+  /**
+   * @returns the newest unsaved `InputBlock` on the block element field
+   * @protected
+   * @since 1.3.0
+   */
+  protected getNewestBlock (): InputBlock|null {
+    return null
+  }
 
   /**
    * Expands the selected blocks.
@@ -769,6 +778,15 @@ class VariantBatchActionBar extends BatchActionBar {
     return this.settings.selector.$selectedItems
       .map((_, block) => $(block).data('variant'))
       .get()
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected getNewestBlock (): VariantInputBlock|null {
+    return this.input.$variantContainer.children()
+      .filter(`[data-id="new${this.input.totalNewVariants}"]`)
+      .data('variant')
   }
 
   /**
