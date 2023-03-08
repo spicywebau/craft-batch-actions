@@ -760,6 +760,29 @@ class VariantBatchActionBar extends BatchActionBar {
   /**
    * @inheritDoc
    */
+  protected registerEventListeners (): void {
+    const blockEventListener: (block: VariantInputBlock) => void = (block) => {
+      const menuObserver = new window.MutationObserver(() => this.refreshButtons())
+      menuObserver.observe(block.$container[0], { childList: true, subtree: true })
+    }
+    this.input.$variantContainer.children()
+      .map((_, variant) => $(variant).data('variant'))
+      .get()
+      .forEach(blockEventListener)
+    this.input.on(this.settings.addBlockEvent, (_: AddBlockEvent) => {
+      this.refreshButtons()
+      const newBlock = this.getNewestBlock()
+
+      if (newBlock !== null) {
+        blockEventListener(newBlock)
+      }
+    })
+    this.input.on('removeBlock', () => this.refreshButtons())
+  }
+
+  /**
+   * @inheritDoc
+   */
   protected isBlockExpanded ($block?: JQuery): boolean {
     return !($block?.hasClass('collapsed') ?? true)
   }
