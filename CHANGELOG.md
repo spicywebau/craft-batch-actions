@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- Added support for Craft Commerce variants
-- Added support for Quick Post widgets
+- Added support for expanding, collapsing, enabling, disabling and deleting Craft Commerce variants
+- Added support for showing batch actions bars on Matrix and Neo fields in Quick Post widgets
 
 ### Fixed
 - Fixed a bug where batch actions bars weren't being initialised on Craft Commerce product edit pages
