@@ -44,11 +44,7 @@ Then open your project's control panel, navigate to Settings &rarr; Plugins, fin
 
 ## Requirements
 
-Batch Actions 1.x requires Craft CMS 4.2.0 or any later Craft CMS 4 release.
-
-Neo support requires Neo 3.3.4 or any later Neo 3 release.
-
-Batch copying and pasting Neo blocks requires Neo 3.4.0 or any later Neo 3 release.
+Batch Actions 2.x requires Craft CMS 5.
 
 Batch copying and pasting Matrix blocks requires [Smith](https://github.com/verbb/smith) to be installed.
 

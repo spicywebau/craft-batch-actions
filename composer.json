@@ -26,8 +26,8 @@
     "rss": "https://github.com/spicywebau/craft-batch-actions/commits/1.x.atom"
   },
   "require": {
-    "craftcms/cms": "^4.2.0",
-    "php": "^8.0.2"
+    "craftcms/cms": "^5.0.0-beta.2",
+    "php": "^8.2"
   },
   "suggest": {
     "spicyweb/craft-neo": "Supports Neo 3.3.4 or later; copying/pasting support requires Neo 3.4.0 or later.",
@@ -48,7 +48,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require-dev": {
-    "craftcms/ecs": "dev-main"
+    "craftcms/ecs": "dev-main",
+    "craftcms/rector": "dev-main"
   },
   "config": {
     "allow-plugins": {

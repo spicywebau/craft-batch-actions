@@ -13,7 +13,7 @@ interface BatchActionBarSettings {
  * The event triggered when a new block is added to a block element field.
  */
 interface AddBlockEvent {
-  $block?: JQuery
+  $entry?: JQuery
   block: NeoInputBlock
 }
 
@@ -166,18 +166,6 @@ abstract class BatchActionBar {
   }
 
   /**
-   * Gets the supported batch actions for the block element input field.
-   * @returns an array of tuples containing the label, icon name, and function to check whether the
-   * action should be enabled.
-   * @protected
-   * @deprecated in 1.2.0; use `actions()` instead
-   */
-  protected supportedActions (): Array<[string, string, Function]> {
-    return this.actions()
-      .map((action) => [action.label, action.icon, action.condition])
-  }
-
-  /**
    * Checks whether a block is expanded.
    * @param $block - A `JQuery` object representing an input block
    * @returns whether `$block` is expanded.
@@ -234,7 +222,7 @@ abstract class BatchActionBar {
         // The add block event is only initialised on the first check of the select checkbox, since
         // if it isn't checked then any new block doesn't need to be checked
         this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
-          const $block = e.$block ?? e.block?.$container ?? this.getNewestBlock()?.$container
+          const $block = e.$entry ?? e.block?.$container ?? this.getNewestBlock()?.$container
 
           if (this.$select.hasClass('checked')) {
             handlingCheckbox = true
@@ -474,8 +462,8 @@ class MatrixBatchActionBar extends BatchActionBar {
    */
   constructor (public readonly input: MatrixInputField) {
     super(input, {
-      addBlockEvent: 'blockAdded',
-      selector: input.blockSelect
+      addBlockEvent: 'entryAdded',
+      selector: input.entrySelect
     })
   }
 
@@ -518,11 +506,11 @@ class MatrixBatchActionBar extends BatchActionBar {
     const settingsMenuListener: (block: MatrixInputBlock) => void = (block) => {
       block.actionDisclosure.on('hide', () => this.refreshButtons())
     }
-    this.input.blockSelect.$items.each((_, block: HTMLElement) => settingsMenuListener($(block).data('block')))
+    this.input.entrySelect.$items.each((_, block: HTMLElement) => settingsMenuListener($(block).data('entry')))
     this.input.on(this.settings.addBlockEvent, (e: AddBlockEvent) => {
-      // Craft triggers the `blockAdded` event after attaching the HTML element to the DOM, but
-      // before actually creating the `MatrixBlock` instance
-      setTimeout(() => settingsMenuListener(e.$block?.data('block')), 250)
+      // Craft triggers the `entryAdded` event after attaching the HTML element to the DOM, but
+      // before actually creating the `Entry` instance
+      setTimeout(() => settingsMenuListener(e.$entry?.data('entry')), 250)
     })
   }
 
@@ -537,15 +525,15 @@ class MatrixBatchActionBar extends BatchActionBar {
    * @inheritDoc
    */
   protected isBlockEnabled ($block?: JQuery): boolean {
-    return typeof $block !== 'undefined' ? !$block.hasClass('disabled') : false
+    return typeof $block !== 'undefined' ? !$block.hasClass('disabled-entry') : false
   }
 
   /**
    * @inheritDoc
    */
   protected getSelectedBlocks (): MatrixInputBlock[] {
-    return this.input.blockSelect.$selectedItems
-      .map((_, blockEl) => $(blockEl).data('block'))
+    return this.input.entrySelect.$selectedItems
+      .map((_, blockEl) => $(blockEl).data('entry'))
       .get()
   }
 
@@ -567,7 +555,7 @@ class MatrixBatchActionBar extends BatchActionBar {
    * @inheritDoc
    */
   protected delete (): void {
-    if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
+    if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected entries?'))) {
       this.getSelectedBlocks().forEach((block) => block.selfDestruct())
     }
   }
