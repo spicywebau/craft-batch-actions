@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Removed Craft 4 compatibility
+- Removed Craft Commerce variant code due to variants being managed with element indexes rather than blocks
 - Removed `spicyweb\batchactions\assets\BatchActionsAsset`; `spicyweb\batchactions\assets\bars\BarsAsset` is used instead
 
 ## 1.3.1 - 2023-10-30

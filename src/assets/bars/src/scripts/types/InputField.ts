@@ -39,18 +39,6 @@ interface NeoBlockType {
 }
 
 /**
- * A Craft Commerce variant input field.
- */
-interface VariantInputField extends InputField {
-  enableSelectedVariants: () => void
-  disableSelectedVariants: () => void
-  deleteSelectedVariants: () => void
-  $variantContainer: JQuery
-  totalNewVariants: number
-  variantSelect: InputBlockSelect
-}
-
-/**
  * A `Garnish.Select` instance on a block element input field.
  */
 interface InputBlockSelect extends GarnishComponent {
@@ -68,6 +56,5 @@ export {
   InputField,
   MatrixInputField,
   NeoInputField,
-  VariantInputField,
   InputBlockSelect
 }

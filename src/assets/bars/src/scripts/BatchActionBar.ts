@@ -1,5 +1,5 @@
-import { InputBlock, MatrixInputBlock, NeoInputBlock, VariantInputBlock } from './types/InputBlock'
-import { InputField, MatrixInputField, NeoInputField, VariantInputField, InputBlockSelect } from './types/InputField'
+import { InputBlock, MatrixInputBlock, NeoInputBlock } from './types/InputBlock'
+import { InputField, MatrixInputField, NeoInputField, InputBlockSelect } from './types/InputField'
 
 /**
  * Settings for a `BatchActionBar`.
@@ -732,101 +732,8 @@ class NeoBatchActionBar extends BatchActionBar {
   }
 }
 
-class VariantBatchActionBar extends BatchActionBar {
-  /**
-   * The constructor.
-   * @param input - The `MatrixInputField`.
-   * @public
-   */
-  constructor (public readonly input: VariantInputField) {
-    super(input, {
-      addBlockEvent: 'blockAdded',
-      selector: input.variantSelect
-    })
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected registerEventListeners (): void {
-    const blockEventListener: (block: VariantInputBlock) => void = (block) => {
-      const menuObserver = new window.MutationObserver(() => this.refreshButtons())
-      menuObserver.observe(block.$container[0], { childList: true, subtree: true })
-    }
-    this.input.$variantContainer.children()
-      .map((_, variant) => $(variant).data('variant'))
-      .get()
-      .forEach(blockEventListener)
-    this.input.on(this.settings.addBlockEvent, (_: AddBlockEvent) => {
-      this.refreshButtons()
-      const newBlock = this.getNewestBlock()
-
-      if (newBlock !== null) {
-        blockEventListener(newBlock)
-      }
-    })
-    this.input.on('removeBlock', () => this.refreshButtons())
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected isBlockExpanded ($block?: JQuery): boolean {
-    return !($block?.hasClass('collapsed') ?? true)
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected isBlockEnabled ($block?: JQuery): boolean {
-    return !($block?.hasClass('disabled') ?? true)
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected getSelectedBlocks (): VariantInputBlock[] {
-    return this.settings.selector.$selectedItems
-      .map((_, block) => $(block).data('variant'))
-      .get()
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected getNewestBlock (): VariantInputBlock|null {
-    return this.input.$variantContainer.children()
-      .filter(`[data-id="new${this.input.totalNewVariants}"]`)
-      .data('variant')
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected enable (): void {
-    this.input.enableSelectedVariants()
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected disable (): void {
-    this.input.disableSelectedVariants()
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected delete (): void {
-    if (window.confirm(Craft.t('batch-actions', 'Are you sure you want to delete the selected blocks?'))) {
-      this.input.deleteSelectedVariants()
-    }
-  }
-}
-
 export {
   BatchActionBar,
   MatrixBatchActionBar,
-  NeoBatchActionBar,
-  VariantBatchActionBar
+  NeoBatchActionBar
 }

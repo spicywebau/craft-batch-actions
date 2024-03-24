@@ -1,4 +1,4 @@
-import { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar, VariantBatchActionBar } from './BatchActionBar'
+import { BatchActionBar, MatrixBatchActionBar, NeoBatchActionBar } from './BatchActionBar'
 import { MatrixInputField, NeoInputField } from './types/InputField'
 import '../styles/main.scss'
 
@@ -77,29 +77,4 @@ if (typeof Neo !== 'undefined' && typeof Neo.Input !== 'undefined') {
       }
     }
   })
-}
-
-if (typeof Craft.Commerce !== 'undefined' && typeof Craft.Commerce.VariantMatrix !== 'undefined') {
-  // Incredibly hacky stuff to work around variants' lack of events
-  const VariantMatrix = Craft.Commerce.VariantMatrix
-  const VariantMatrixInit = VariantMatrix.prototype.init
-  const VariantMatrixAddVariant = VariantMatrix.prototype.addVariant
-  const initBarFunction: (variantMatrix: any) => void = (variantMatrix) => {
-    actionBars.push(new VariantBatchActionBar(variantMatrix))
-  }
-
-  VariantMatrix.prototype.init = function () {
-    VariantMatrixInit.apply(this, arguments)
-
-    if (barsInitialised) {
-      initBarFunction(this)
-    } else {
-      initBarFunctions.push(() => initBarFunction(this))
-    }
-  }
-
-  VariantMatrix.prototype.addVariant = function () {
-    VariantMatrixAddVariant.apply(this, arguments)
-    setTimeout(() => this.trigger('blockAdded'), 200)
-  }
 }
