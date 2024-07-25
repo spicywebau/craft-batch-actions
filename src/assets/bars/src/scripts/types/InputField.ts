@@ -11,7 +11,7 @@ interface InputField extends GarnishComponent {
  * A Matrix input field.
  */
 interface MatrixInputField extends InputField {
-  $blockContainer: JQuery
+  $entriesContainer: JQuery
   entrySelect: InputBlockSelect
 }
 

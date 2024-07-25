@@ -478,11 +478,11 @@ class MatrixBatchActionBar extends BatchActionBar {
       this._$dummyBlock = $('<div/>', {
         class: 'hidden',
         data: {
-          block: {
+          entry: {
             $actionMenu: $()
           }
         }
-      }).prependTo(this.input.$blockContainer)
+      }).prependTo(this.input.$entriesContainer)
       this._smithMenu = new Craft.Smith.Menu(
         this.input.$container,
         this._$dummyBlock,
