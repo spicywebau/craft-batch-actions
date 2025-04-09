@@ -5,10 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 1.4.0 - 2025-04-09
 
 ### Added
-- Added the `barsDisallowedFields` plugin setting, for setting Matrix or Neo field handles for which the batch actions bar won't be initialised
+- Added the `barsAllowedFields` plugin setting, for setting handles of Matrix or Neo fields that should be the only ones given a batch actions bar.
 
 ## 1.3.1 - 2023-10-30
 
