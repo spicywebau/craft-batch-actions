@@ -14,7 +14,13 @@ use craft\base\Model;
 class Settings extends Model
 {
     /**
-     * @var string[] Handles of Matrix or Neo fields that shouldn't have a batch actions bar
+     * @var string[]|null Handles of the only Matrix or Neo fields that should have a batch actions bar, or null to allow all except those set in barsDisallowedFields
+     * @since 1.4.0
+     */
+    public ?array $barsAllowedFields = null;
+
+    /**
+     * @var string[] Handles of Matrix or Neo fields that shouldn't have a batch actions bar (if barsAllowedFields isn't set)
      */
     public array $barsDisallowedFields = [];
 }

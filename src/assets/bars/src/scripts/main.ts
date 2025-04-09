@@ -12,6 +12,7 @@ declare global {
 }
 
 interface Settings {
+  barsAllowedFields: string[]|null
   barsDisallowedFields: string[]
 }
 
@@ -27,6 +28,7 @@ const actionBars: BatchActionBar[] = []
 const initBarFunctions: Function[] = []
 let barsInitialised = false
 let barsSettings: Settings = {
+  barsAllowedFields: null,
   barsDisallowedFields: []
 }
 
@@ -40,15 +42,24 @@ window.BatchActions = {
   bars: () => Array.from(actionBars)
 }
 
+const initBarIfAllowed: (fieldHandle: string, initFn: Function) => void = (fieldHandle, initFn) => {
+  if (
+    // Is barsAllowedFields set, and is this field in barsAllowedFields?
+    (barsSettings.barsAllowedFields?.includes(fieldHandle) ?? false) ||
+    // Otherwise, if barsAllowedFields isn't set, is this field in barsDisallowedFields?
+    (barsSettings.barsAllowedFields === null && !barsSettings.barsDisallowedFields.includes(fieldHandle))
+  ) {
+    initFn()
+  }
+}
+
 // Only listen for Matrix input initialisation if there are actually any Matrix fields
 if (typeof Craft.MatrixInput !== 'undefined') {
   Garnish.on(Craft.MatrixInput, 'afterInit', (e: MatrixAfterInitEvent) => {
-    const fieldHandle = e.target.$container.closest('[data-type=craft\\\\fields\\\\Matrix]').data('attribute')
-    const initBarFunction: () => void = () => {
-      if (!barsSettings.barsDisallowedFields.includes(fieldHandle)) {
-        actionBars.push(new MatrixBatchActionBar(e.target))
-      }
-    }
+    const initBarFunction: () => void = () => initBarIfAllowed(
+      e.target.$container.closest('[data-type=craft\\\\fields\\\\Matrix]').data('attribute'),
+      () => actionBars.push(new MatrixBatchActionBar(e.target))
+    )
 
     if (barsInitialised) {
       initBarFunction()
@@ -65,12 +76,10 @@ if (typeof Neo !== 'undefined' && typeof Neo.Input !== 'undefined') {
     // TODO: remove this check on Craft 5
     // Also, the bar shouldn't be initialised when viewing a revision
     if (typeof e.target.blockSelect !== 'undefined' && !e.target.$container.hasClass('is-static')) {
-      const fieldHandle = e.target.getName()
-      const initBarFunction: () => void = () => {
-        if (!barsSettings.barsDisallowedFields.includes(fieldHandle)) {
-          actionBars.push(new NeoBatchActionBar(e.target))
-        }
-      }
+      const initBarFunction: () => void = () => initBarIfAllowed(
+        e.target.getName(),
+        () => actionBars.push(new NeoBatchActionBar(e.target))
+      )
 
       if (barsInitialised) {
         initBarFunction()
