@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed Craft Commerce variant code due to variants being managed with element indexes rather than blocks
 - Removed `spicyweb\batchactions\assets\BatchActionsAsset`; `spicyweb\batchactions\assets\bars\BarsAsset` is used instead
 
+## 1.4.0 - 2025-04-09
+
+### Added
+- Added the `barsAllowedFields` plugin setting, for setting handles of Matrix or Neo fields that should be the only ones given a batch actions bar.
+
 ## 1.3.1 - 2023-10-30
 
 ### Added
